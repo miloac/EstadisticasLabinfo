@@ -5,12 +5,27 @@
  */
 package analysis;
 
+import edu.eci.labinfo.estadisticasv2.conexion.Conexion;
+import edu.eci.labinfo.estadisticasv2.conexion.EstadisticasConexion;
+import edu.eci.labinfo.estadisticasv2.conexion.ReservasConexion;
+import edu.eci.labinfo.estadisticasv2.logs.Log;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Daniela Sepulveda Alzate
  */
 public class Analysis {
-        
+    
     //turnos
     private int[][] b0;
     //plataformas
@@ -33,7 +48,39 @@ public class Analysis {
        multi = new int[8][6];
     }
     
-    public void revisarSemana(){
+    public void statisticWeek(int cod){
+       Conexion reservas=new ReservasConexion();
+       Conexion estadisticas=new EstadisticasConexion();
+        try {
+            Connection res=reservas.connection();
+            String semana="SELECT semana FROM `semanas` where id="+cod;
+            Statement stmt=res.prepareStatement(semana);
+            ResultSet rs = stmt.executeQuery(semana);
+            rs.next();
+            System.out.println(rs.getString(1));
+            
+            GregorianCalendar a=new GregorianCalendar(2017,0,16,0,0);
+            GregorianCalendar b=new GregorianCalendar(2017,0,21,23,59);    
+            Timestamp ap = new Timestamp(a.getTimeInMillis());
+            Timestamp bp = new Timestamp(b.getTimeInMillis());
+            System.out.println(ap);
+            System.out.println(bp);
+            
+            Connection esta=estadisticas.connection();
+            Statement stmtk=esta.createStatement();
+            
+            
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(Analysis.class.getName()).log(Level.SEVERE, null, ex);
+            Log.anotar(ex);
+        }
+       
+        
+    }
+    
+     public void statistic(int ini, int fin){
+        
+        
     }
     
 

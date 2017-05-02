@@ -51,13 +51,13 @@ public class EstadisticasConexion extends Conexion{
             Log.anotar(ex);
         }
         
-        Connection conn = null;
+        conexion = null;
         //**********conexion con laboratorio**********	
         //direccion de la base de datos
         DriverManager.setLoginTimeout(40);
-        conn = DriverManager.getConnection (url, userName, password);    
+        conexion = DriverManager.getConnection (url, userName, password);    
         
-        return conn;
+        return conexion;
     }
 
     @Override
