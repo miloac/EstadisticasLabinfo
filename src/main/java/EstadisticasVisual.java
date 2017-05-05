@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class EstadisticasVisual {
     
-    public static void main(String[] args){
+    public static void main(String[] args){  
         try {
             String fecha = JOptionPane.showInputDialog(null, "Ingresar fecha del lunes de la semana a consultar, en el formato AAAA-MM-DD. \nEjemplo para elegir Febrero 25 de 2013 se debe ingresar: 2013-02-25", "Ingresar", 3);
             if (fecha == null || fecha.isEmpty()) {

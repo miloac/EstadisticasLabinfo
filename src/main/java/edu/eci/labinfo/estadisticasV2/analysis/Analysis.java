@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package analysis;
+package edu.eci.labinfo.estadisticasV2.analysis;
 
 import edu.eci.labinfo.estadisticasv2.conexion.Conexion;
 import edu.eci.labinfo.estadisticasv2.conexion.EstadisticasConexion;
@@ -14,9 +14,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +27,20 @@ import java.util.logging.Logger;
  * @author Daniela Sepulveda Alzate
  */
 public class Analysis {
-    
+    private static final HashMap<String,Integer> meses = new HashMap<String,Integer>() {{     
+       put("ene", 0);     
+       put("feb", 1);     
+       put("mar", 2);     
+       put("abr", 3);     
+       put("may", 4);     
+       put("jun", 5);  
+       put("jul", 6); 
+       put("ago", 7); 
+       put("sep", 8); 
+       put("oct", 9); 
+       put("nov", 10); 
+       put("dic", 11); 
+    }};  
     //turnos
     private int[][] b0;
     //plataformas
@@ -57,18 +72,20 @@ public class Analysis {
             Statement stmt=res.prepareStatement(semana);
             ResultSet rs = stmt.executeQuery(semana);
             rs.next();
-            System.out.println(rs.getString(1));
-            
-            GregorianCalendar a=new GregorianCalendar(2017,0,16,0,0);
-            GregorianCalendar b=new GregorianCalendar(2017,0,21,23,59);    
-            Timestamp ap = new Timestamp(a.getTimeInMillis());
-            Timestamp bp = new Timestamp(b.getTimeInMillis());
-            System.out.println(ap);
-            System.out.println(bp);
-            
-            Connection esta=estadisticas.connection();
-            Statement stmtk=esta.createStatement();
-            
+            String consulta=rs.getString(1);
+            try{
+                GregorianCalendar fechaInicioSemana=new GregorianCalendar();
+                int year=fechaInicioSemana.get(Calendar.YEAR);
+                String [] fechas=consulta.trim().split("-");
+                fechaInicioSemana=new GregorianCalendar(year,meses.get(fechas[1]),Integer.parseInt(fechas[0]),0,0);
+                GregorianCalendar fechaFinSemana=new GregorianCalendar(year,meses.get(fechas[3]),Integer.parseInt(fechas[2]),23,59);
+                Timestamp ini =new Timestamp(fechaInicioSemana.getTimeInMillis()) ;
+                Timestamp fin= new Timestamp(fechaFinSemana.getTimeInMillis());  
+                Connection esta=estadisticas.connection();
+                Statement stmtk=esta.createStatement();
+            }catch(Exception e){
+                
+            } 
             
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Analysis.class.getName()).log(Level.SEVERE, null, ex);
