@@ -16,9 +16,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +27,26 @@ import java.util.logging.Logger;
  * @author Daniela Sepulveda Alzate
  */
 public class Analysis {
+    private static final HashMap<String,Integer> DIA = new HashMap<String,Integer>() {{     
+       put("L", 0);
+       put("M", 1);
+       put("Mc",2); 
+       put("J", 3); 
+       put("V", 4);
+       put("S", 5);  
+    }};
+    
+    private static final HashMap<String,Integer> HORA = new HashMap<String,Integer>() {{     
+       put("7:00", 0);
+       put("8:30", 1);
+       put("10:00", 2); 
+       put("11:30", 3); 
+       put("1:00", 4);
+       put("2:30", 5); 
+       put("4:00", 6); 
+       put("5:30", 7);  
+    }};
+     
     private static final HashMap<String,Integer> MESES = new HashMap<String,Integer>() {{     
        put("ene", 0);     
        put("feb", 1);     
@@ -58,7 +78,7 @@ public class Analysis {
        put("INTERACTIVA",7 );
        put("TURNOS", 25); //BO (turnos)    
     }};
-   
+    
     public Analysis(){
         
     }
@@ -79,80 +99,105 @@ public class Analysis {
             if(fechas.length==4){
                 fechaInicioSemana=new GregorianCalendar(year,MESES.get(fechas[1]),Integer.parseInt(fechas[0]),0,0);
                 GregorianCalendar fechaFinSemana=new GregorianCalendar(year,MESES.get(fechas[3]),Integer.parseInt(fechas[2]),23,59);
-                Timestamp ini =new Timestamp(fechaInicioSemana.getTimeInMillis()) ;
-                Timestamp fin= new Timestamp(fechaFinSemana.getTimeInMillis());
-                controlStatistics(ini,fin);
+                controlStatistics(fechaInicioSemana, fechaFinSemana);
                 String reserva="SELECT * FROM  `reservas` WHERE semana =  '"+consulta+"'";
                 stmt=res.prepareStatement(reserva);
-                rs = stmt.executeQuery(semana);                
+                rs = stmt.executeQuery(semana);
+                Set<String> dias=DIA.keySet();
+                Set<String> horario=HORA.keySet();
                 while(rs.next()){
-                   for (int i = 1; i < 7; i++) {
-                       
-                    
-                    
+                   for (String dia: dias) {
+                       for(String hora: horario){
+                           String consuldia=rs.getString(dia);
+                           String consulhora=rs.getString(hora);
+                          if(consuldia.equals(dia) && consulhora.equals(hora)){
+                              String saln=rs.getString("salon");
+                              if(SALONES.containsKey(saln)){
+                                    int[][] temp=SALONES.get(saln);
+                                    temp[HORA.get(consulhora)][DIA.get(consuldia)]=PCXSALONES.get(saln);
+                                    SALONES.put(saln, temp);
+                               }
+                          }
+                       }
                     }
                 }
-                
             }
-
-            
+            res.close();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Analysis.class.getName()).log(Level.SEVERE, null, ex);
             Log.anotar(ex);
-        }
-       
-        
+        }   
     }
     
      public void statistics(int ini, int fin){
          for (int i = ini; i < fin+1; i++) {
              statisticWeek(i);
-         }
-        
+         }       
     }
      
-    private void controlStatistics(Timestamp ini,Timestamp fin){
+    private void controlStatistics(GregorianCalendar fechaInicioSemana,GregorianCalendar fechaFinSemana){
         Conexion estadisticas=new EstadisticasConexion();
         Connection esta;
         try {
             esta = estadisticas.connection();
-            Statement stmtk=esta.createStatement();
-            String consulta="SELECT * FROM `datos` "
-                    + "WHERE logon BETWEEN '2017-04-29 09:11:56' AND '2017-05-29 09:11:56'"
-                    + "AND logoff BETWEEN '2017-04-29 09:11:56' AND '2017-05-29 09:11:56'";
-            
+            Timestamp ini =new Timestamp(fechaInicioSemana.getTimeInMillis()) ;
+            Timestamp fin= new Timestamp(fechaFinSemana.getTimeInMillis());
+            String consulta="SELECT * FROM `datos` WHERE logon BETWEEN '"+ini+"' AND '"+fin+"'";
+            Statement stmt=esta.prepareStatement(consulta);
+            ResultSet rs = stmt.executeQuery(consulta);
+            while(rs.next()){
+                String[] eqs = rs.getString("ip").trim().split(".");
+                String[] hora = rs.getString("logon").trim().split(" ");
+                System.out.println(eqs[3]);
+                System.out.println(Arrays.toString(hora));
+                String[] hms=hora[1].split(":");
+                             
+            }
+            esta.close();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Analysis.class.getName()).log(Level.SEVERE, null, ex);
             Log.anotar(ex);
         }
-        
     }
     
-
-    /*public int[][] getB0() {
-        return salones.get("B-0");
+    private boolean isNumeric(String t){
+        try{
+            Integer.parseInt(t);
+        }catch(NumberFormatException e){
+            
+            return false;
+        }
+        return true;
     }
-
-    public int[][] getPlat() {
-        return plat;
-    }
-
-    public int[][] getRed() {
-        return red;
-    }
-
-    public int[][] getSoft() {
-        return soft;
-    }
-
-    public int[][] getInte() {
-        return inte;
-    }
-
-    public int[][] getMulti() {
-        return multi;
-    }*/
     
-   
-    
+    public int[][] getB0() {
+        return SALONES.get("TURNOS");
+    }
+
+    public int[][] getPlataformas() {
+        return SALONES.get("INFRAESTRUCTURA");
+    }
+
+    public int[][] getRedes() {
+        return SALONES.get("REDES");
+    }
+
+    public int[][] getSoftware() {
+        return SALONES.get("B-0");
+    }
+
+    public int[][] getInteractiva() {
+        return SALONES.get("INTERACTIVA");
+    }
+
+    public int[][] getMultimedia() {
+        return SALONES.get("C1-205B");
+    }  
+
+    private void time(String salon, String[] hms) {
+        int[][]temp=SALONES.get(salon);
+        Set<String> horario=HORA.keySet();
+        int h = Integer.valueOf(hms[0]) * 100 + Integer.valueOf(hms[1]);
+       
+    }
 }
