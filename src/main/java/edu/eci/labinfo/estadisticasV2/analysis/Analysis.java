@@ -79,6 +79,27 @@ public class Analysis {
        put("TURNOS", 25); //BO (turnos)    
     }};
     
+    private static final HashMap<Integer,String> GREGORIAN = new HashMap<Integer,String>() {{     
+       put(2,"L");
+       put(3,"M");
+       put(4,"Mc");
+       put(5,"J");
+       put(6,"V");
+       put(7,"S");
+         
+    }};
+    
+    private static final HashMap<String,Integer> TIME = new HashMap<String,Integer>() {{     
+       put("7:00",700);
+       put("8:30",830);
+       put("10:00",1000); 
+       put("11:30",1130); 
+       put("1:00",1300);
+       put("2:30",1430); 
+       put("4:00",1600); 
+       put("5:30",1730);  
+    }};
+    
     public Analysis(){
         
     }
@@ -140,18 +161,43 @@ public class Analysis {
         Connection esta;
         try {
             esta = estadisticas.connection();
-            Timestamp ini =new Timestamp(fechaInicioSemana.getTimeInMillis()) ;
-            Timestamp fin= new Timestamp(fechaFinSemana.getTimeInMillis());
-            String consulta="SELECT * FROM `datos` WHERE logon BETWEEN '"+ini+"' AND '"+fin+"'";
-            Statement stmt=esta.prepareStatement(consulta);
-            ResultSet rs = stmt.executeQuery(consulta);
-            while(rs.next()){
-                String[] eqs = rs.getString("ip").trim().split(".");
-                String[] hora = rs.getString("logon").trim().split(" ");
-                System.out.println(eqs[3]);
-                System.out.println(Arrays.toString(hora));
-                String[] hms=hora[1].split(":");
-                             
+            int year=fechaInicioSemana.YEAR;
+            int month=fechaInicioSemana.MONTH;
+            for(int i=fechaInicioSemana.DAY_OF_WEEK;i<8;i++){       
+                GregorianCalendar temp=new GregorianCalendar(year,month,i,0,0);
+                GregorianCalendar temp2=new GregorianCalendar(year,month,i,11,59);
+                Timestamp ini =new Timestamp(temp.getTimeInMillis()) ;
+                Timestamp fin= new Timestamp(temp2.getTimeInMillis());
+                String consulta="SELECT * FROM `datos` WHERE logon BETWEEN '"+ini+"' AND '"+fin+"'";
+                Statement stmt=esta.prepareStatement(consulta);
+                ResultSet rs = stmt.executeQuery(consulta);
+                while(rs.next()){
+                    String[] eqs = rs.getString("ip").trim().split(".");
+                    String[] hora = rs.getString("logon").trim().split(" ");
+                    System.out.println(eqs[3]);
+                    System.out.println(Arrays.toString(hora));
+                    String [] hms=hora[1].split(":");
+                    int h = Integer.valueOf(hms[0]) * 100 + Integer.valueOf(hms[1]);
+                    int ip=Integer.parseInt(eqs[3].trim());
+                    if (ip > 0 && ip < 25) {
+                        //IW
+                        time("B-0",h,GREGORIAN.get(i));
+                    }else if (ip > 49 && ip < 71) {
+                        //plat
+                        time("INFRAESTRUCTURA",h,GREGORIAN.get(i));
+                    } else if (ip > 100 && ip < 113) {
+                        //redes
+                        time("REDES",h,GREGORIAN.get(i));
+                    } else if (ip > 160 && ip < 173) {
+                        //mac
+                        time("C1-205B",h,GREGORIAN.get(i));
+                    }else if (ip > 150 && ip < 158) {
+                        //interactiva
+                        time("INTERACTIVA",h,GREGORIAN.get(i));
+                    }else{
+                        time("TURNOS",h,GREGORIAN.get(i));                    
+                    }               
+                }                 
             }
             esta.close();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
@@ -168,6 +214,30 @@ public class Analysis {
             return false;
         }
         return true;
+    }
+    
+    private void time(String salon,int hora,String dia){
+        int[][] temp=SALONES.get(salon);
+        /*
+                700-830
+                830-1000
+                1000-1130
+                1130-1300
+                1300-1430
+                1430-1600
+                1600-1730
+                1730-1900
+                
+        */
+        if (hora < 830) {
+            temp[HORA.get("7:00")][DIA.get(dia)]+=1;
+        } else if (hora >= 830 && hora < 1000) {
+            temp[HORA.get("8:30")][DIA.get(dia)]+=1;
+        } else if (hora >= 1000 && hora < 1130) {
+            temp[HORA.get("10:00")][DIA.get(dia)]+=1;
+        }else if (hora >= 1130 && hora < 1300) {
+            temp[HORA.get("11:30")][DIA.get(dia)]+=1;
+        }
     }
     
     public int[][] getB0() {
@@ -193,11 +263,4 @@ public class Analysis {
     public int[][] getMultimedia() {
         return SALONES.get("C1-205B");
     }  
-
-    private void time(String salon, String[] hms) {
-        int[][]temp=SALONES.get(salon);
-        Set<String> horario=HORA.keySet();
-        int h = Integer.valueOf(hms[0]) * 100 + Integer.valueOf(hms[1]);
-       
-    }
 }
