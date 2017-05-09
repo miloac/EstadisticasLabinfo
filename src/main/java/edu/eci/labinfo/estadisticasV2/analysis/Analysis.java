@@ -113,6 +113,7 @@ public class Analysis {
             ResultSet rs = stmt.executeQuery(semana);
             rs.next();
             String consulta=rs.getString(1);
+            System.out.println("Semana: "+consulta);
             GregorianCalendar fechaInicioSemana=new GregorianCalendar();
             int year=fechaInicioSemana.get(Calendar.YEAR);
             //Format:   ejm: 17-ene-16-ene
@@ -123,14 +124,15 @@ public class Analysis {
                 controlStatistics(fechaInicioSemana, fechaFinSemana);
                 String reserva="SELECT * FROM  `reservas` WHERE semana =  '"+consulta+"'";
                 stmt=res.prepareStatement(reserva);
-                rs = stmt.executeQuery(semana);
+                rs = stmt.executeQuery(reserva);
                 Set<String> dias=DIA.keySet();
                 Set<String> horario=HORA.keySet();
                 while(rs.next()){
                    for (String dia: dias) {
                        for(String hora: horario){
-                           String consuldia=rs.getString(dia);
-                           String consulhora=rs.getString(hora);
+                           System.out.println("Semana: "+dia+" "+"Hora: "+hora);
+                           String consuldia=rs.getString("dia");
+                           String consulhora=rs.getString("hora");
                           if(consuldia.equals(dia) && consulhora.equals(hora)){
                               String saln=rs.getString("salon");
                               if(SALONES.containsKey(saln)){
@@ -218,17 +220,7 @@ public class Analysis {
     
     private void time(String salon,int hora,String dia){
         int[][] temp=SALONES.get(salon);
-        /*
-                700-830
-                830-1000
-                1000-1130
-                1130-1300
-                1300-1430
-                1430-1600
-                1600-1730
-                1730-1900
-                
-        */
+        
         if (hora < 830) {
             temp[HORA.get("7:00")][DIA.get(dia)]+=1;
         } else if (hora >= 830 && hora < 1000) {
@@ -237,7 +229,18 @@ public class Analysis {
             temp[HORA.get("10:00")][DIA.get(dia)]+=1;
         }else if (hora >= 1130 && hora < 1300) {
             temp[HORA.get("11:30")][DIA.get(dia)]+=1;
+        }else if (hora >= 1300 && hora < 1430) {
+            temp[HORA.get("1:00")][DIA.get(dia)]+=1;
+        }else if (hora >= 1430 && hora < 1600) {
+            temp[HORA.get("2:30")][DIA.get(dia)]+=1;
+        }else if (hora >= 1600 && hora < 1730) {
+            temp[HORA.get("4:00")][DIA.get(dia)]+=1;
+        }else if (hora >= 1730 && hora < 1900) {
+            temp[HORA.get("5:30")][DIA.get(dia)]+=1;
+        }else if(hora>1900){
+             temp[HORA.get("5:30")][DIA.get(dia)]+=1;
         }
+        SALONES.put(salon, temp);
     }
     
     public int[][] getB0() {

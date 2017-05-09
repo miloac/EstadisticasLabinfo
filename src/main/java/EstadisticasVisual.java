@@ -1,8 +1,12 @@
 
+import edu.eci.labinfo.estadisticasV2.analysis.Analysis;
+import edu.eci.labinfo.estadisticasv2.generator.CSVGenerator;
+import edu.eci.labinfo.estadisticasv2.generator.Generator;
+import edu.eci.labinfo.estadisticasv2.generator.PDFGenerator;
+import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.JOptionPane;
-
 
 
 /*
@@ -17,8 +21,14 @@ import javax.swing.JOptionPane;
  */
 public class EstadisticasVisual {
     
-    public static void main(String[] args){  
-        try {
+    public static void main(String[] args) throws FileNotFoundException{  
+        
+       Analysis an=new Analysis();
+       an.statisticWeek(16);
+       Generator gen=new PDFGenerator();
+       Generator gen2=new CSVGenerator();
+       gen2.documento("Semana16", "Semana16", an.getSoftware(), an.getB0(), an.getPlataformas(), an.getRedes(), an.getMultimedia(), an.getInteractiva());
+       /* try {
             String fecha = JOptionPane.showInputDialog(null, "Ingresar fecha del lunes de la semana a consultar, en el formato AAAA-MM-DD. \nEjemplo para elegir Febrero 25 de 2013 se debe ingresar: 2013-02-25", "Ingresar", 3);
             if (fecha == null || fecha.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Ingresar fecha.", "Error", 0);
@@ -38,7 +48,7 @@ public class EstadisticasVisual {
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
-        }
+        }*/
     }
     
 }
