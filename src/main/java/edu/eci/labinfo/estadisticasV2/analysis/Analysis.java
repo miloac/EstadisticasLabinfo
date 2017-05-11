@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -85,8 +86,7 @@ public class Analysis {
        put(4,"Mc");
        put(5,"J");
        put(6,"V");
-       put(7,"S");
-         
+       put(7,"S");   
     }};
     
     private static final HashMap<String,Integer> TIME = new HashMap<String,Integer>() {{     
@@ -122,26 +122,24 @@ public class Analysis {
                 fechaInicioSemana=new GregorianCalendar(year,MESES.get(fechas[1]),Integer.parseInt(fechas[0]),0,0);
                 GregorianCalendar fechaFinSemana=new GregorianCalendar(year,MESES.get(fechas[3]),Integer.parseInt(fechas[2]),23,59);
                 controlStatistics(fechaInicioSemana, fechaFinSemana);
-                String reserva="SELECT * FROM  `reservas` WHERE semana =  '"+consulta+"'";
-                stmt=res.prepareStatement(reserva);
-                rs = stmt.executeQuery(reserva);
                 Set<String> dias=DIA.keySet();
-                Set<String> horario=HORA.keySet();
-                while(rs.next()){
-                   for (String dia: dias) {
-                       for(String hora: horario){
-                           System.out.println("Semana: "+dia+" "+"Hora: "+hora);
-                           String consuldia=rs.getString("dia");
-                           String consulhora=rs.getString("hora");
-                          if(consuldia.equals(dia) && consulhora.equals(hora)){
-                              String saln=rs.getString("salon");
-                              if(SALONES.containsKey(saln)){
-                                    int[][] temp=SALONES.get(saln);
-                                    temp[HORA.get(consulhora)][DIA.get(consuldia)]=PCXSALONES.get(saln);
-                                    SALONES.put(saln, temp);
-                               }
-                          }
-                       }
+                Set<String> horario=HORA.keySet();                
+                for (String dia: dias) {
+                    for(String hora: horario){
+                        String reserva="SELECT * FROM  `reservas` WHERE semana =  '"+consulta+"' AND dia= '"+dia+"' AND hora='"+hora+"'";
+                        stmt=res.prepareStatement(reserva);
+                        rs = stmt.executeQuery(reserva);
+                        while(rs.next()){ 
+                            String saln=rs.getString("salon");
+                            System.out.println("Semana: "+dia+" "+"Hora: "+hora+" "+saln);
+                            if(SALONES.containsKey(saln)){
+                                int[][] temp=SALONES.get(saln);
+                                temp[HORA.get(hora)][DIA.get(dia)]=PCXSALONES.get(saln);
+                                System.out.println(temp[HORA.get(hora)][DIA.get(dia)]);
+                                SALONES.put(saln, temp);
+                            }
+                                
+                        }
                     }
                 }
             }
@@ -163,21 +161,22 @@ public class Analysis {
         Connection esta;
         try {
             esta = estadisticas.connection();
-            int year=fechaInicioSemana.YEAR;
-            int month=fechaInicioSemana.MONTH;
-            for(int i=fechaInicioSemana.DAY_OF_WEEK;i<8;i++){       
-                GregorianCalendar temp=new GregorianCalendar(year,month,i,0,0);
-                GregorianCalendar temp2=new GregorianCalendar(year,month,i,11,59);
+            int year=fechaInicioSemana.get(Calendar.YEAR);
+            int month=fechaInicioSemana.get(Calendar.MONTH);
+            int date=fechaInicioSemana.get(Calendar.DAY_OF_MONTH)-1;
+            for(int i=2;i<8;i++){
+                date+=1;
+                GregorianCalendar temp=new GregorianCalendar(year,month,date,0,0);
+                GregorianCalendar temp2=new GregorianCalendar(year,month,date,11,59);
                 Timestamp ini =new Timestamp(temp.getTimeInMillis()) ;
                 Timestamp fin= new Timestamp(temp2.getTimeInMillis());
+                System.out.println(" ini: " +ini.toString()+" f: "+fin.toString());
                 String consulta="SELECT * FROM `datos` WHERE logon BETWEEN '"+ini+"' AND '"+fin+"'";
                 Statement stmt=esta.prepareStatement(consulta);
                 ResultSet rs = stmt.executeQuery(consulta);
                 while(rs.next()){
-                    String[] eqs = rs.getString("ip").trim().split(".");
+                    String[] eqs = rs.getString("ip").trim().split(Pattern.quote("."));
                     String[] hora = rs.getString("logon").trim().split(" ");
-                    System.out.println(eqs[3]);
-                    System.out.println(Arrays.toString(hora));
                     String [] hms=hora[1].split(":");
                     int h = Integer.valueOf(hms[0]) * 100 + Integer.valueOf(hms[1]);
                     int ip=Integer.parseInt(eqs[3].trim());
