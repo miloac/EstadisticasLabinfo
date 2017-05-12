@@ -77,7 +77,7 @@ public class Analysis {
        put("B-0",24 );      //ingenieria IW
        put("C1-205B", 12);     
        put("INTERACTIVA",7 );
-       put("TURNOS", 25); //BO (turnos)    
+       put("TURNOS", 29); //BO (turnos)    
     }};
     
     private static final HashMap<Integer,String> GREGORIAN = new HashMap<Integer,String>() {{     
@@ -134,8 +134,7 @@ public class Analysis {
                             System.out.println("Semana: "+dia+" "+"Hora: "+hora+" "+saln);
                             if(SALONES.containsKey(saln)){
                                 int[][] temp=SALONES.get(saln);
-                                temp[HORA.get(hora)][DIA.get(dia)]=PCXSALONES.get(saln);
-                                System.out.println(temp[HORA.get(hora)][DIA.get(dia)]);
+                                temp[HORA.get(hora)][DIA.get(dia)]=PCXSALONES.get(saln);                               
                                 SALONES.put(saln, temp);
                             }
                                 
@@ -167,19 +166,36 @@ public class Analysis {
             for(int i=2;i<8;i++){
                 date+=1;
                 GregorianCalendar temp=new GregorianCalendar(year,month,date,0,0);
-                GregorianCalendar temp2=new GregorianCalendar(year,month,date,11,59);
+                GregorianCalendar temp2=new GregorianCalendar(year,month,date,23,59);
                 Timestamp ini =new Timestamp(temp.getTimeInMillis()) ;
                 Timestamp fin= new Timestamp(temp2.getTimeInMillis());
                 System.out.println(" ini: " +ini.toString()+" f: "+fin.toString());
-                String consulta="SELECT * FROM `datos` WHERE logon BETWEEN '"+ini+"' AND '"+fin+"'";
+                //datos
+                //String consulta="SELECT * FROM `datos` WHERE logon BETWEEN '"+ini+"' AND '"+fin+"'";
+                //logs
+                String consulta="SELECT * FROM `LOGS` WHERE LOGON BETWEEN '"+ini+"' AND '"+fin+"'";
                 Statement stmt=esta.prepareStatement(consulta);
                 ResultSet rs = stmt.executeQuery(consulta);
                 while(rs.next()){
-                    String[] eqs = rs.getString("ip").trim().split(Pattern.quote("."));
+                    //datos
+                    /*String[] eqs = rs.getString("ip").trim().split(Pattern.quote("."));
                     String[] hora = rs.getString("logon").trim().split(" ");
                     String [] hms=hora[1].split(":");
                     int h = Integer.valueOf(hms[0]) * 100 + Integer.valueOf(hms[1]);
-                    int ip=Integer.parseInt(eqs[3].trim());
+                    int ip=Integer.parseInt(eqs[3].trim());*/
+                    //LOGS
+                    String eq = rs.getString("EQUIPO");
+                    String fecha = rs.getString("LOGON");
+                    String eqs = eq.toLowerCase().contains("sistema") ? eq.substring(8) : eq.substring(5);
+                    String[] hora = rs.getString("logon").trim().split(" ");
+                    String [] hms=hora[1].split(":");
+                    int h = Integer.valueOf(hms[0]) * 100 + Integer.valueOf(hms[1]);
+                    int ip=0;
+                    try{
+                        ip=Integer.parseInt(eqs);
+                    }catch(Exception e){
+                        time("TURNOS",h,GREGORIAN.get(i));  
+                    }
                     if (ip > 0 && ip < 25) {
                         //IW
                         time("B-0",h,GREGORIAN.get(i));
