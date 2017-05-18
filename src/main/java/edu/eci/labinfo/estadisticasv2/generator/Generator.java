@@ -14,8 +14,8 @@ import java.io.FileNotFoundException;
 public abstract class Generator {
     /**
      * Archivo para la generacion de las estadisticas
-     * @param fechai, fecha de inicio de la semana
-     * @param fechaf, fec.ha de fin de la semana
+     * @param Semana
+     * @param fecha, fec.ha de fin de la semana
      * @param soft , estadisticas de la sala de ingenieria de software
      * @param b0 , estadisticas de la sala de b0 turnos
      * @param plat , estadisticas de la sala de plataformas
@@ -24,6 +24,6 @@ public abstract class Generator {
      * @param inte , estadisticas de la sala interativa
      * @throws java.io.FileNotFoundException
      */
-     public abstract void documento(String fechai, String fechaf, int [][] soft, int [][] b0, int [][] plat, int [][] red,int [][] multi, int [][]inte) throws FileNotFoundException;
+     public abstract void documento(String Semana, String fecha, int [][] soft, int [][] b0, int [][] plat, int [][] red,int [][] multi, int [][]inte) throws FileNotFoundException;
      
 }

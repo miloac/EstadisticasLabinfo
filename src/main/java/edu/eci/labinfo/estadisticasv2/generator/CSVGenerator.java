@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 
 /**
  *
- * @author
+ * @author Daniela Sepulveda
  */
 public class CSVGenerator extends Generator {
 
@@ -23,11 +23,11 @@ public class CSVGenerator extends Generator {
     PrintWriter pw;
     
     @Override
-    public void documento(String fechai, String fechaf, int[][] soft, int[][] b0, int[][] plat, int[][] red, int[][] multi, int[][] inte) throws FileNotFoundException {
-        String nombre = "Estadisticas " + fechai + ".csv";
+    public void documento(String semana, String fecha, int[][] soft, int[][] b0, int[][] plat, int[][] red, int[][] multi, int[][] inte) throws FileNotFoundException {
+        String nombre = "Estadisticas-"+semana+"-" +fecha+ ".csv";
         archivo = new File(nombre);
         pw = new PrintWriter(archivo);
-        pw.println("Documento de Estadísticas entre Lunes " + fechai + " y S\u00e1bado " + fechaf + ",,,,,,,,,,");
+        pw.println("Estad\u00edsticas semana: " + semana + " " + fecha + ",,,,,,,,,,");
         pw.println(salto);
         pw.println(semana);
         for (int i = 0; i < soft.length; i++) {
@@ -48,12 +48,12 @@ public class CSVGenerator extends Generator {
         }
         pw.println(salto);
         pw.println(salto);
-        imprimirSala(salas[0],fechai,fechaf,soft);
-        imprimirSala(salas[1],fechai,fechaf,b0);
-        imprimirSala(salas[2],fechai,fechaf,plat);
-        imprimirSala(salas[3],fechai,fechaf,red);
-        imprimirSala(salas[4],fechai,fechaf,multi);
-        imprimirSala(salas[5],fechai,fechaf,inte);
+        imprimirSala(salas[0],soft);
+        imprimirSala(salas[1],b0);
+        imprimirSala(salas[2],plat);
+        imprimirSala(salas[3],red);
+        imprimirSala(salas[4],multi);
+        imprimirSala(salas[5],inte);
         pw.close();
     }
     /**
@@ -63,7 +63,7 @@ public class CSVGenerator extends Generator {
      * @param fechaf fecha de fin
      * @param sala 
      */
-    private void imprimirSala(String nombre,String fechai, String fechaf, int[][] sala){
+    private void imprimirSala(String nombre, int[][] sala){
         pw.println(nombre+":,,,,,,,,,,");
         pw.println(salto);
         pw.println(semana);

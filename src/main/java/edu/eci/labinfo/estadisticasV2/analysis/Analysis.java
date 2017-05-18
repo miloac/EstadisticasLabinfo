@@ -8,26 +8,31 @@ package edu.eci.labinfo.estadisticasV2.analysis;
 import edu.eci.labinfo.estadisticasv2.conexion.Conexion;
 import edu.eci.labinfo.estadisticasv2.conexion.EstadisticasConexion;
 import edu.eci.labinfo.estadisticasv2.conexion.ReservasConexion;
+import edu.eci.labinfo.estadisticasv2.generator.CSVGenerator;
+import edu.eci.labinfo.estadisticasv2.generator.Generator;
+import edu.eci.labinfo.estadisticasv2.generator.PDFGenerator;
 import edu.eci.labinfo.estadisticasv2.logs.Log;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  *
  * @author Daniela Sepulveda Alzate
  */
 public class Analysis {
+    Generator genPDF;
+    Generator genCSV;
+    
     private static final HashMap<String,Integer> DIA = new HashMap<String,Integer>() {{     
        put("L", 0);
        put("M", 1);
@@ -101,10 +106,11 @@ public class Analysis {
     }};
     
     public Analysis(){
-        
+        genPDF=new PDFGenerator();
+        genCSV=new CSVGenerator();      
     }
     
-    public void statisticWeek(int cod){
+    public void statisticWeek(int cod) throws FileNotFoundException{
        Conexion reservas=new ReservasConexion();       
         try {
             Connection res=reservas.connection();
@@ -113,7 +119,6 @@ public class Analysis {
             ResultSet rs = stmt.executeQuery(semana);
             rs.next();
             String consulta=rs.getString(1);
-            System.out.println("Semana: "+consulta);
             GregorianCalendar fechaInicioSemana=new GregorianCalendar();
             int year=fechaInicioSemana.get(Calendar.YEAR);
             //Format:   ejm: 17-ene-16-ene
@@ -130,8 +135,7 @@ public class Analysis {
                         stmt=res.prepareStatement(reserva);
                         rs = stmt.executeQuery(reserva);
                         while(rs.next()){ 
-                            String saln=rs.getString("salon");
-                            System.out.println("Semana: "+dia+" "+"Hora: "+hora+" "+saln);
+                            String saln=rs.getString("salon");                      
                             if(SALONES.containsKey(saln)){
                                 int[][] temp=SALONES.get(saln);
                                 temp[HORA.get(hora)][DIA.get(dia)]=PCXSALONES.get(saln);                               
@@ -143,13 +147,15 @@ public class Analysis {
                 }
             }
             res.close();
+            genPDF.documento(Integer.toString(cod), consulta, getSoftware(), getB0(), getPlataformas(), getRedes(), getMultimedia(), getInteractiva());
+            genCSV.documento(Integer.toString(cod), consulta, getSoftware(), getB0(), getPlataformas(), getRedes(), getMultimedia(), getInteractiva());
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
             Logger.getLogger(Analysis.class.getName()).log(Level.SEVERE, null, ex);
             Log.anotar(ex);
         }   
     }
     
-     public void statistics(int ini, int fin){
+     public void statistics(int ini, int fin) throws FileNotFoundException{
          for (int i = ini; i < fin+1; i++) {
              statisticWeek(i);
          }       
@@ -169,7 +175,6 @@ public class Analysis {
                 GregorianCalendar temp2=new GregorianCalendar(year,month,date,23,59);
                 Timestamp ini =new Timestamp(temp.getTimeInMillis()) ;
                 Timestamp fin= new Timestamp(temp2.getTimeInMillis());
-                System.out.println(" ini: " +ini.toString()+" f: "+fin.toString());
                 //datos
                 //String consulta="SELECT * FROM `datos` WHERE logon BETWEEN '"+ini+"' AND '"+fin+"'";
                 //logs

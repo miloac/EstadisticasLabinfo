@@ -17,27 +17,27 @@ import javax.swing.JOptionPane;
  * @author 
  */
 public class PDFGenerator extends Generator{
-    private void propiedades(Document document, String fechai, String fechaf) {
-        document.addTitle("Estad\u00edsticas entre Lunes " + fechai + " y S\u00e1bado " + fechaf);
+    private void propiedades(Document document, String semana, String fecha) {
+        document.addTitle("Estad\u00edsticas semana: " + semana + " " + fecha);
         document.addSubject("Tablas estad\u00edsticas semana correspontiende.");
-        document.addKeywords("Estad\u00edsticas, Labinfo, Reporte");
+        document.addKeywords("Estad\u00edsticas de uso, Labinfo, Reporte semanal");
         document.addAuthor("Estadisticas.jar (Santiago A. Alzate S.)");
         document.addCreator("Estadisticas.jar (Santiago A. Alzate S.)");
     }
 
     @Override
-    public void documento(String fechai, String fechaf, int [][] soft, int [][] b0, int [][] plat, int [][] red,int [][] multi, int [][]inte) throws FileNotFoundException {
+    public void documento(String semana, String fecha, int [][] soft, int [][] b0, int [][] plat, int [][] red,int [][] multi, int [][]inte) throws FileNotFoundException {
         try {
             Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream("Estadisticas-" + fechai + ".pdf"));
+            PdfWriter.getInstance(document, new FileOutputStream("Estadisticas-"+semana+"-" +fecha+ ".pdf"));
             document.open();
-            this.propiedades(document, fechai, fechaf);
+            this.propiedades(document, semana, fecha);
             document.newPage();
             Chunk tab1 = new Chunk(new VerticalPositionMark(), 50.0f, false);
             Chunk tab2 = new Chunk(new VerticalPositionMark(), 200.0f, false);
             Paragraph para = new Paragraph();
             para.add(new Paragraph(" "));
-            para.add(new Chunk("Documento de Estad\u00edsticas entre Lunes " + fechai + " y S\u00e1bado " + fechaf));
+            para.add(new Chunk("Estad\u00edsticas semana: " + semana + " " + fecha));
             para.add(new Paragraph(" "));
             para.add(new Chunk("Laboratorio de Ingenier\u00eda de Software:\n"));
             this.guardar(para, tab1, tab2, soft);
