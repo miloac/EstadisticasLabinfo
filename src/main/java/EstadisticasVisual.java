@@ -5,6 +5,7 @@ import edu.eci.labinfo.estadisticasv2.generator.Generator;
 import edu.eci.labinfo.estadisticasv2.generator.PDFGenerator;
 import edu.eci.labinfo.estadisticasv2.logs.Log;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -23,10 +24,14 @@ import javax.swing.JOptionPane;
 public class EstadisticasVisual {
     
     public static void main(String[] args){  
-        
-       Analysis an=new Analysis();
+        Analysis an=new Analysis();
         try {
-            an.statistics(1, 16);
+            
+            //primer semestre
+            an.statisticsAll(1, 16,16);
+            
+            //segundo semestre
+           // an.statisticsAll(18, 42);
             
             /* try {-
             String fecha = JOptionPane.showInputDialog(null, "Ingresar fecha del lunes de la semana a consultar, en el formato AAAA-MM-DD. \nEjemplo para elegir Febrero 25 de 2013 se debe ingresar: 2013-02-25", "Ingresar", 3);
@@ -57,3 +62,4 @@ public class EstadisticasVisual {
     }
     
 }
+

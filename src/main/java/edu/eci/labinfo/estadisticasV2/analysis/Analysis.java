@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -32,6 +33,15 @@ import java.util.logging.Logger;
 public class Analysis {
     Generator genPDF;
     Generator genCSV;
+    
+     private static final HashMap<String,double[][]> CONSOLIDADO = new HashMap<String,double[][]>() {{     
+       put("REDES", new double[9][7]);     
+       put("INFRAESTRUCTURA", new double[9][7]);     //plataformas
+       put("B-0", new double[9][7]);      //ingenieria IW
+       put("C1-205B", new double[9][7]);     
+       put("INTERACTIVA", new double[9][7]);
+       put("TURNOS", new double[9][7]); //BO (turnos)    
+    }};
     
     private static final HashMap<String,Integer> DIA = new HashMap<String,Integer>() {{     
        put("L", 0);
@@ -107,7 +117,7 @@ public class Analysis {
     
     public Analysis(){
         genPDF=new PDFGenerator();
-        genCSV=new CSVGenerator();      
+        genCSV=new CSVGenerator();
     }
     
     public void statisticWeek(int cod) throws FileNotFoundException{
@@ -155,10 +165,26 @@ public class Analysis {
         }   
     }
     
-     public void statistics(int ini, int fin) throws FileNotFoundException{
+     public void statisticsAll(int ini, int fin,int semanas) throws FileNotFoundException{
+         Set<String> salones=CONSOLIDADO.keySet();
          for (int i = ini; i < fin+1; i++) {
-             statisticWeek(i);
-         }       
+            statisticWeek(i);
+            for(String sal: salones){
+                for (int j=0; j<8; j++){
+                    for(int h=0; h<6; h++){      
+                        CONSOLIDADO.get(sal)[j][h]+=SALONES.get(sal)[j][h];
+                    }
+                }
+            }
+        }
+        for(String sal: salones){
+            for (int j=0; j<8; j++){
+                for(int h=0;h<6;h++){
+                    CONSOLIDADO.get(sal)[j][h]=CONSOLIDADO.get(sal)[j][h]/semanas;  
+                }
+            }            
+        }
+         
     }
      
     private void controlStatistics(GregorianCalendar fechaInicioSemana,GregorianCalendar fechaFinSemana){
@@ -228,6 +254,7 @@ public class Analysis {
         }
     }
     
+
     private boolean isNumeric(String t){
         try{
             Integer.parseInt(t);
@@ -286,4 +313,27 @@ public class Analysis {
     public int[][] getMultimedia() {
         return SALONES.get("C1-205B");
     }  
+    public double[][] getConsolidadoB0() {
+        return CONSOLIDADO.get("TURNOS");
+    }
+
+    public double[][] getConsolidadoPlataformas() {
+        return CONSOLIDADO.get("INFRAESTRUCTURA");
+    }
+
+    public double[][] getConsolidadoRedes() {
+        return CONSOLIDADO.get("REDES");
+    }
+
+    public double[][] getConsolidadoSoftware() {
+        return CONSOLIDADO.get("B-0");
+    }
+
+    public double[][] getConsolidadoInteractiva() {
+        return CONSOLIDADO.get("INTERACTIVA");
+    }
+
+    public double[][] getConsolidadoMultimedia() {
+        return CONSOLIDADO.get("C1-205B");
+    }
 }
