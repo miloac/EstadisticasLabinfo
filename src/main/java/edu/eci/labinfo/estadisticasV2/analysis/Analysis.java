@@ -132,7 +132,7 @@ public class Analysis {
             put("5:30", 1730);
         }
     };
-
+    
     public Analysis() {
         genPDF = new PDFGenerator();
         genCSV = new CSVGenerator();

@@ -9,6 +9,8 @@ package edu.eci.labinfo.estadisticasV2.analysis;
  *
  * @author Daniela Sepulveda
  */
+import java.util.Arrays;
+import java.util.HashMap;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel; 
 import org.jfree.chart.JFreeChart; 
@@ -19,56 +21,89 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities; 
 
 public class BarChart extends ApplicationFrame {
+    
+    private Analysis analysis;
+    private static final HashMap<Integer, String> DIA = new HashMap<Integer, String>() {
+        {
+            put(0, "Lunes");
+            put(1, "Martes");
+            put(2,"Miercoles");
+            put(3,"Jueves");
+            put(4,"Viernes");
+            put(5,"Sabado");
+        }
+    };
    
-   public BarChart( String applicationTitle , String chartTitle ) {
-      super( applicationTitle );        
+   public BarChart( String applicationTitle , String chartTitle, Analysis ana) {
+      super( applicationTitle );//titulo jframe
+      analysis=ana;
+      System.out.println(ana);      
       JFreeChart barChart = ChartFactory.createBarChart(
-         chartTitle,           
-         "Category",            
-         "Score",            
+         chartTitle,           //titulo grafico
+         "Dias semana",            
+         "Horario",            
          createDataset(),          
          PlotOrientation.VERTICAL,           
          true, true, false);
          
       ChartPanel chartPanel = new ChartPanel( barChart );        
-      chartPanel.setPreferredSize(new java.awt.Dimension( 560 , 367 ) );        
+      chartPanel.setPreferredSize(new java.awt.Dimension( 600 , 500 ) );        
       setContentPane( chartPanel ); 
    }
    
    private CategoryDataset createDataset( ) {
-      final String fiat = "FIAT";        
-      final String audi = "AUDI";        
-      final String ford = "FORD";        
-      final String speed = "Speed";        
-      final String millage = "Millage";        
-      final String userrating = "User Rating";        
-      final String safety = "safety";        
+      final String B0 = "B0";        
+      final String INGSOFTWARE = "Ingenieria software";        
+      final String PLATAFORMAS = "Plataformas";        
+      final String REDES = "Redes";
+      final String INTERACTIVA = "Interactiva";
+      final String MAC = "MAC";
+      
       final DefaultCategoryDataset dataset = 
       new DefaultCategoryDataset( );  
-
-      dataset.addValue( 1.0 , fiat , speed );        
-      dataset.addValue( 3.0 , fiat , userrating );        
-      dataset.addValue( 5.0 , fiat , millage ); 
-      dataset.addValue( 5.0 , fiat , safety );           
-
-      dataset.addValue( 5.0 , audi , speed );        
-      dataset.addValue( 6.0 , audi , userrating );       
-      dataset.addValue( 10.0 , audi , millage );        
-      dataset.addValue( 4.0 , audi , safety );
-
-      dataset.addValue( 4.0 , ford , speed );        
-      dataset.addValue( 2.0 , ford , userrating );        
-      dataset.addValue( 3.0 , ford , millage );        
-      dataset.addValue( 6.0 , ford , safety );               
-
+      //dataset.addValue( 100,"7:00", "Lunes");
+      /**double [][] b0=analysis.getConsolidadoB0();
+      for (int h = 0; h < 6; h++) {
+          for (int j = 0; j < 8; j++) {
+            dataset.addValue( b0[j][h] , B0, DIA.get(h));
+          }
+      }
+      double [][] pla=analysis.getConsolidadoPlataformas();
+      for (int h = 0; h < 6; h++) {
+          for (int j = 0; j < 8; j++) {
+            dataset.addValue( pla[j][h] , PLATAFORMAS, DIA.get(h));
+          }
+      }
+      double [][] red=analysis.getConsolidadoRedes();
+      for (int h = 0; h < 6; h++) {
+          for (int j = 0; j < 8; j++) {
+            dataset.addValue( red[j][h] , REDES, DIA.get(h));
+          }        
+      }
+      double [][] sw=analysis.getConsolidadoSoftware();
+      for (int h = 0; h < 6; h++) {
+          for (int j = 0; j < 8; j++) {
+            dataset.addValue( sw[j][h] , INGSOFTWARE, DIA.get(h));
+          }
+      }
+      double [][] multi=analysis.getConsolidadoMultimedia();
+      for (int h = 0; h < 6; h++) {
+          for (int j = 0; j < 8; j++) {
+            dataset.addValue( multi[j][h] , MAC, DIA.get(h));
+          }
+      }
+      double [][] inte=analysis.getConsolidadoInteractiva();
+      for (int h = 0; h < 6; h++) {
+          for (int j = 0; j < 8; j++) {
+            dataset.addValue( inte[j][h] , INTERACTIVA, DIA.get(h));
+          }
+      }*/
       return dataset; 
    }
    
-   public static void main( String[ ] args ) {
-      BarChart chart = new BarChart("Car Usage Statistics", 
-         "Which car do you like?");
-      chart.pack( );        
-      RefineryUtilities.centerFrameOnScreen( chart );        
-      chart.setVisible( true ); 
+   public void generarGrafico() {
+      this.pack( );        
+      RefineryUtilities.centerFrameOnScreen( this );        
+      this.setVisible( true ); 
    }
 }

@@ -1,5 +1,6 @@
 
 import edu.eci.labinfo.estadisticasV2.analysis.Analysis;
+import edu.eci.labinfo.estadisticasV2.analysis.BarChart;
 import edu.eci.labinfo.estadisticasv2.generator.CSVGenerator;
 import edu.eci.labinfo.estadisticasv2.generator.Generator;
 import edu.eci.labinfo.estadisticasv2.generator.PDFGenerator;
@@ -29,6 +30,8 @@ public class EstadisticasVisual {
             
             //primer semestre
             an.statisticsAll(1, 16,16);
+            BarChart bar=new BarChart("Estadisticas", "Estadisticas Consolidado", an);
+            bar.generarGrafico();
             
             //segundo semestre
            // an.statisticsAll(18, 42);
