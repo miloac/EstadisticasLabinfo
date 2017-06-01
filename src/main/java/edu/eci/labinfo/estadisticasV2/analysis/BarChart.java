@@ -9,7 +9,6 @@ package edu.eci.labinfo.estadisticasV2.analysis;
  *
  * @author Daniela Sepulveda
  */
-import java.util.Arrays;
 import java.util.HashMap;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel; 
@@ -22,7 +21,8 @@ import org.jfree.ui.RefineryUtilities;
 
 public class BarChart extends ApplicationFrame {
     
-    private Analysis analysis;
+    private double[][] sala;
+    private String nsala;
     private static final HashMap<Integer, String> DIA = new HashMap<Integer, String>() {
         {
             put(0, "Lunes");
@@ -33,11 +33,24 @@ public class BarChart extends ApplicationFrame {
             put(5,"Sabado");
         }
     };
+    
+    private static final HashMap<Integer, String> HORA = new HashMap<Integer, String>() {
+        {
+            put(0,"7:00");
+            put(1,"8:30");
+            put(2,"10:00");
+            put(3,"11:30");
+            put(4,"1:00");
+            put(5,"2:30");
+            put(6,"4:00");
+            put(7,"5:30");
+        }
+    };
    
-   public BarChart( String applicationTitle , String chartTitle, Analysis ana) {
+   public BarChart( String applicationTitle , String chartTitle, double[][] sal) {
       super( applicationTitle );//titulo jframe
-      analysis=ana;
-      System.out.println(ana);      
+      sala=sal;  
+      nsala=chartTitle;
       JFreeChart barChart = ChartFactory.createBarChart(
          chartTitle,           //titulo grafico
          "Dias semana",            
@@ -51,53 +64,15 @@ public class BarChart extends ApplicationFrame {
       setContentPane( chartPanel ); 
    }
    
-   private CategoryDataset createDataset( ) {
-      final String B0 = "B0";        
-      final String INGSOFTWARE = "Ingenieria software";        
-      final String PLATAFORMAS = "Plataformas";        
-      final String REDES = "Redes";
-      final String INTERACTIVA = "Interactiva";
-      final String MAC = "MAC";
-      
+   private CategoryDataset createDataset() {
       final DefaultCategoryDataset dataset = 
       new DefaultCategoryDataset( );  
-      //dataset.addValue( 100,"7:00", "Lunes");
-      /**double [][] b0=analysis.getConsolidadoB0();
       for (int h = 0; h < 6; h++) {
           for (int j = 0; j < 8; j++) {
-            dataset.addValue( b0[j][h] , B0, DIA.get(h));
+            dataset.addValue( sala[j][h],HORA.get(j), DIA.get(h));
           }
       }
-      double [][] pla=analysis.getConsolidadoPlataformas();
-      for (int h = 0; h < 6; h++) {
-          for (int j = 0; j < 8; j++) {
-            dataset.addValue( pla[j][h] , PLATAFORMAS, DIA.get(h));
-          }
-      }
-      double [][] red=analysis.getConsolidadoRedes();
-      for (int h = 0; h < 6; h++) {
-          for (int j = 0; j < 8; j++) {
-            dataset.addValue( red[j][h] , REDES, DIA.get(h));
-          }        
-      }
-      double [][] sw=analysis.getConsolidadoSoftware();
-      for (int h = 0; h < 6; h++) {
-          for (int j = 0; j < 8; j++) {
-            dataset.addValue( sw[j][h] , INGSOFTWARE, DIA.get(h));
-          }
-      }
-      double [][] multi=analysis.getConsolidadoMultimedia();
-      for (int h = 0; h < 6; h++) {
-          for (int j = 0; j < 8; j++) {
-            dataset.addValue( multi[j][h] , MAC, DIA.get(h));
-          }
-      }
-      double [][] inte=analysis.getConsolidadoInteractiva();
-      for (int h = 0; h < 6; h++) {
-          for (int j = 0; j < 8; j++) {
-            dataset.addValue( inte[j][h] , INTERACTIVA, DIA.get(h));
-          }
-      }*/
+      
       return dataset; 
    }
    

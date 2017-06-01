@@ -18,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -34,6 +33,29 @@ public class Analysis {
 
     Generator genPDF;
     Generator genCSV;
+    private static final HashMap<Integer, String> DIAReves = new HashMap<Integer, String>() {
+        {
+            put(0, "Lunes");
+            put(1, "Martes");
+            put(2,"Miercoles");
+            put(3,"Jueves");
+            put(4,"Viernes");
+            put(5,"Sabado");
+        }
+    };
+    
+    private static final HashMap<Integer, String> HORAReves = new HashMap<Integer, String>() {
+        {
+            put(0,"7:00");
+            put(1,"8:30");
+            put(2,"10:00");
+            put(3,"11:30");
+            put(4,"1:00");
+            put(5,"2:30");
+            put(6,"4:00");
+            put(7,"5:30");
+        }
+    };
     
     private static final HashMap<String, double[][]> CONSOLIDADO = new HashMap<String, double[][]>() {
         {
@@ -320,27 +342,27 @@ public class Analysis {
     }
     
     private String getMayorHora(String sala){
+        int ind=0;
         for (int j = 0; j < 8; j++) {
             double max=0.0;
-            double ind=0.0;
             if(max<CONSOLIDADO.get(sala)[j][6]){
                 max=CONSOLIDADO.get(sala)[j][6];
                 ind=j;
             }
         }
-        return "";
+        return HORAReves.get(ind);
     }
     
     private String getMayorDia(String sala){
+        int ind=0;
          for (int j = 0; j < 6; j++) {
             double max=0.0;
-            double ind=0.0;
             if(max<CONSOLIDADO.get(sala)[8][j]){
                 max=CONSOLIDADO.get(sala)[8][j];
                 ind=j;
             }
         }
-        return "";
+        return DIAReves.get(ind);
     }
     
     public String getMayorHoraB0(){
