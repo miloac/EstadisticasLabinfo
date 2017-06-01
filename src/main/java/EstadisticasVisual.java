@@ -38,7 +38,7 @@ public class EstadisticasVisual {
             an.statisticsAll(1, 16,16);
             GregorianCalendar fecha= new GregorianCalendar();
             int year = fecha.get(Calendar.YEAR);
-            ReportGenerator repor=new ReportGenerator("Consolidado Estadisticas"+year+"-1","semana 1-16",fecha.getTime().toString(), an);
+            ReportGenerator repor=new ReportGenerator("Consolidado Estadisticas"+year+"-1","semana 1-16","", an);
             //segundo semestre
             // an.statisticsAll(18, 42);
             //tercer semestre

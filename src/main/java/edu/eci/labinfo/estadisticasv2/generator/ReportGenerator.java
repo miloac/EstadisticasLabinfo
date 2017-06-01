@@ -149,7 +149,8 @@ public class ReportGenerator {
             document.add(para);
             double [][]mul=ana.getConsolidadoMultimedia();
             generarTabla("Multimedia y móviles",mul);
-            generarGrafica("Estadisticas","Multimedia y móviles",mul);       
+            generarGrafica("Estadisticas","Multimedia y móviles",mul);    
+            document.close();
     }
     
     private void generarGrafica(String titulo,String subtitulo,double[][]iw) throws BadElementException, IOException, DocumentException{
@@ -157,11 +158,11 @@ public class ReportGenerator {
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(Chunk.NEWLINE));
             document.add(para);
-            BarChart graficaIW=new BarChart(titulo,titulo,iw);
+            /*BarChart graficaIW=new BarChart(titulo,titulo,iw);
             Image imag = Image.getInstance(graficaIW.getIconImage(),null);
             imag.scaleAbsolute(80f, 60f);
             imag.setAlignment(Element.ALIGN_CENTER);
-            document.add(imag);
+            document.add(imag);*/
     }
 
     private void generarTabla(String sala, double[][]sal) throws DocumentException{
