@@ -256,3 +256,19 @@ Caused by: java.net.SocketTimeoutException: connect timed out
 	at com.mysql.jdbc.MysqlIO.<init>(MysqlIO.java:300)
 	... 18 more
 
+Jun 01, 2017 2:07:01 PM edu.eci.labinfo.estadisticasv2.logs.Log anotar
+SEVERE: java.io.FileNotFoundException: /home/sistemas/Estadisticas20171/resources/logolaboratorio.png (No such file or directory)
+java.io.FileNotFoundException: /home/sistemas/Estadisticas20171/resources/logolaboratorio.png (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at java.io.FileInputStream.<init>(FileInputStream.java:93)
+	at sun.net.www.protocol.file.FileURLConnection.connect(FileURLConnection.java:90)
+	at sun.net.www.protocol.file.FileURLConnection.getInputStream(FileURLConnection.java:188)
+	at java.net.URL.openStream(URL.java:1045)
+	at com.itextpdf.text.Image.getInstance(Image.java:261)
+	at com.itextpdf.text.Image.getInstance(Image.java:242)
+	at com.itextpdf.text.Image.getInstance(Image.java:365)
+	at edu.eci.labinfo.estadisticasv2.generator.ReportGenerator.<init>(ReportGenerator.java:49)
+	at EstadisticasVisual.main(EstadisticasVisual.java:41)
+
