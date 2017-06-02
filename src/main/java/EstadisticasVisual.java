@@ -38,7 +38,7 @@ public class EstadisticasVisual {
             an.statisticsAll(1, 16,16);
             GregorianCalendar fecha= new GregorianCalendar();
             int year = fecha.get(Calendar.YEAR);
-            ReportGenerator repor=new ReportGenerator("Consolidado Estadisticas"+year+"-1","semana 1-16","", an);
+            ReportGenerator repor=new ReportGenerator("Consolidado Estadisticas "+year+"-1","semana 1-16","", an);
             //segundo semestre
             // an.statisticsAll(18, 42);
             //tercer semestre
@@ -54,6 +54,10 @@ public class EstadisticasVisual {
             Log.anotar(ex);
             JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
         } catch (IOException ex) {
+            Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
+            Log.anotar(ex);
+            JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
+        } catch (InterruptedException ex) {
             Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
             Log.anotar(ex);
             JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);

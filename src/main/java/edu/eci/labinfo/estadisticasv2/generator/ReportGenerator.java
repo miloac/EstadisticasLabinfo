@@ -21,9 +21,11 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import edu.eci.labinfo.estadisticasV2.analysis.Analysis;
 import edu.eci.labinfo.estadisticasV2.analysis.BarChart;
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import org.jfree.chart.JFreeChart;
 
 /**
  *
@@ -38,7 +40,7 @@ public class ReportGenerator {
     private Font fontTitulos;
     private Font fontMarcoTabla;
     
-    public ReportGenerator(String titulo,String semana, String fecha,Analysis an) throws FileNotFoundException, DocumentException, IOException{
+    public ReportGenerator(String titulo,String semana, String fecha,Analysis an) throws FileNotFoundException, DocumentException, IOException, InterruptedException{
             ana=an;
             document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream("ReporteEstadisticas-"+semana+"-" +fecha+ ".pdf"));
@@ -61,24 +63,31 @@ public class ReportGenerator {
             fontTitulos = FontFactory.getFont(
             FontFactory.HELVETICA, 14, Font.BOLD,new BaseColor(0,135,80));  
             Paragraph para = new Paragraph();
-            para.add(new Phrase("Estad\u00edsticas laboratorio informatica: "+titulo+ " " +semana + " " + fecha, fontTitulos));
-            para = new Paragraph();
+            para.add(new Phrase("Estad\u00edsticas laboratorio informatica: \n"
+                    + ""+titulo+ " " +semana + " " + fecha, fontTitulos));
+            para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase("Reporte de estadisticas de uso de los laboratorios", fontTitulos));
+            para.add(new Phrase(Chunk.NEWLINE));
+            para.add(new Phrase(Chunk.NEWLINE));
+            document.add(para);
             para = new Paragraph();
             para.add(new Phrase("Laboratorio de Ingenieria de Software", fontTitulos));
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(
             "Para el laboratorio de ingeniería de software se puede observar "
-            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaSoftware().toLowerCase()+"s"+
-              ", mientras que la hora más utilizada es a la "+ana.getMayorHoraSoftware()+"."
+            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaSoftware().toLowerCase()+
+              ", mientras que la hora más utilizada es a las "+ana.getMayorHoraSoftware()+"."
             ,fontContenido));
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(Chunk.NEWLINE));
             document.add(para);
             double [][]iw=ana.getConsolidadoSoftware();
             generarTabla("Ingenieria Software",iw);
-            generarGrafica("Estadisticas","Ingenieria software",iw);
+            para=new Paragraph();
+            para.add(new Phrase(Chunk.NEWLINE));
+            document.add(para);
+            //generarGrafica("Estadisticas","Ingenieria software",iw);
             //plataformas
             para = new Paragraph();
             para.add(new Phrase("Laboratorio de plataformas computacionales", fontTitulos));
@@ -86,15 +95,18 @@ public class ReportGenerator {
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(
             "Para el laboratorio de plataformas computacionales se puede observar "
-            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaPlataformas().toLowerCase()+"s"+
-              ", mientras que la hora más utilizada es a la "+ana.getMayorHoraPlataformas()+"."
+            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaPlataformas().toLowerCase()+
+              ", mientras que la hora más utilizada es a las "+ana.getMayorHoraPlataformas()+"."
             ,fontContenido));
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(Chunk.NEWLINE));
             document.add(para);
             double [][]pla=ana.getConsolidadoPlataformas();
             generarTabla("Plataformas computacionales",pla);
-            generarGrafica("Estadisticas","Plataformas computacionales",pla);
+            para=new Paragraph();
+            para.add(new Phrase(Chunk.NEWLINE));
+            document.add(para);
+            //generarGrafica("Estadisticas","Plataformas computacionales",pla);
             //Redes
             para = new Paragraph();
             para.add(new Phrase("Laboratorio redes de computadores", fontTitulos));
@@ -102,15 +114,18 @@ public class ReportGenerator {
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(
             "Para el laboratorio de redes de computadores se puede observar "
-            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaRedes().toLowerCase()+"s"+
-              ", mientras que la hora más utilizada es a la "+ana.getMayorHoraRedes()+"."
+            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaRedes().toLowerCase()+
+              ", mientras que la hora más utilizada es a las "+ana.getMayorHoraRedes()+"."
             ,fontContenido));
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(Chunk.NEWLINE));
             document.add(para);
             double [][]red=ana.getConsolidadoRedes();
-            generarTabla("Redes de computadores",iw);
-            generarGrafica("Estadisticas","Redes de computadores",iw);
+            generarTabla("Redes de computadores",red);
+            para=new Paragraph();
+            para.add(new Phrase(Chunk.NEWLINE));
+            document.add(para);
+            //generarGrafica("Estadisticas","Redes de computadores",red);
             //B0
             para = new Paragraph();
             para.add(new Phrase("Laboratorio B0 turnos", fontTitulos));
@@ -118,15 +133,18 @@ public class ReportGenerator {
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(
             "Para el laboratorio de B0 turnos se puede observar "
-            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaB0().toLowerCase()+"s"+
-              ", mientras que la hora más utilizada es a la "+ana.getMayorHoraB0()+"."
+            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaB0().toLowerCase()+
+              ", mientras que la hora más utilizada es a las "+ana.getMayorHoraB0()+"."
             ,fontContenido));
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(Chunk.NEWLINE));
             document.add(para);
             double [][]b0=ana.getConsolidadoB0();
             generarTabla("B0 Turnos",b0);
-            generarGrafica("Estadisticas","B0 Turnos",b0);
+            para=new Paragraph();
+            para.add(new Phrase(Chunk.NEWLINE));
+            //generarGrafica("Estadisticas","B0 Turnos",b0);
+            document.add(para);
             //Interactiva
             para = new Paragraph();
             para.add(new Phrase("Aula inteligente", fontTitulos));
@@ -134,15 +152,18 @@ public class ReportGenerator {
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(
             "Para el laboratorio de aula inteligente se puede observar "
-            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaInteractiva().toLowerCase()+"s"+
-              ", mientras que la hora más utilizada es a la "+ana.getMayorHoraInteractiva()+"."
+            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaInteractiva().toLowerCase()+
+              ", mientras que la hora más utilizada es a las "+ana.getMayorHoraInteractiva()+"."
             ,fontContenido));
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(Chunk.NEWLINE));
             document.add(para);
             double [][]inte=ana.getConsolidadoInteractiva();
             generarTabla("Aula inteligente",inte);
-            generarGrafica("Estadisticas","Aula Inteligente",inte);
+            para=new Paragraph();
+            para.add(new Phrase(Chunk.NEWLINE));
+            document.add(para);
+            //generarGrafica("Estadisticas","Aula Inteligente",inte);
             //Mac
             para = new Paragraph();
             para.add(new Phrase("Laboratorio de multimedia y móviles", fontTitulos));
@@ -150,7 +171,7 @@ public class ReportGenerator {
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(
             "Para el laboratorio de multimedia y móviles se puede observar "
-            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaMultimedia().toLowerCase()+"s"+
+            + "que el uso del laboratorio el día más alto son los "+ana.getMayorDiaMultimedia().toLowerCase()+
               ", mientras que la hora más utilizada es a las "+ana.getMayorHoraMultimedia()+"."
             ,fontContenido));
             para.add(new Phrase(Chunk.NEWLINE));
@@ -158,19 +179,32 @@ public class ReportGenerator {
             document.add(para);
             double [][]mul=ana.getConsolidadoMultimedia();
             generarTabla("Multimedia y móviles",mul);
-            generarGrafica("Estadisticas","Multimedia y móviles",mul);    
+            para = new Paragraph();
+            para.add(new Phrase(Chunk.NEWLINE));
+            document.add(para);
+            para.add(new Phrase("Graficas estadisticas de uso", fontTitulos));
+            para.add(new Phrase(Chunk.NEWLINE));
+            document.add(para);
+            generarGrafica("Estadisticas","Ingenieria software",iw);
+            generarGrafica("Estadisticas","Plataformas computacionales",pla);
+            generarGrafica("Estadisticas","Redes de computadores",red);
+            generarGrafica("Estadisticas","B0 Turnos",b0);
+            generarGrafica("Estadisticas","Aula Inteligente",inte);
+            generarGrafica("Estadisticas","Multimedia y móviles",mul);
             document.close();
     }
     
-    private void generarGrafica(String titulo,String subtitulo,double[][]iw) throws BadElementException, IOException, DocumentException{
+    private void generarGrafica(String titulo,String subtitulo,double[][]iw) throws BadElementException, IOException, DocumentException, InterruptedException{
             Paragraph para=new Paragraph();
+            para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(Chunk.NEWLINE));
             document.add(para);
             BarChart graficaIW=new BarChart(titulo,subtitulo,iw);
-            Image imag = Image.getInstance(graficaIW.getImage());
-            imag.scaleAbsolute(300f, 300f);
-            imag.setAlignment(Element.ALIGN_CENTER);
-            document.add(imag);
+            JFreeChart barChart=graficaIW.getbarChart();
+            barChart.setBackgroundPaint(Color.white);
+            java.awt.Image originalImage = barChart.createBufferedImage(500, 300);
+            Image image1 = Image.getInstance(originalImage,Color.white);
+            document.add(image1);
             para=new Paragraph();
             para.add(new Phrase(Chunk.NEWLINE));
             para.add(new Phrase(Chunk.NEWLINE));
@@ -180,7 +214,6 @@ public class ReportGenerator {
     private void generarTabla(String sala, double[][]sal) throws DocumentException{
            PdfPTable table = new PdfPTable(8); 
             PdfPCell celdatitulo = new PdfPCell(new Paragraph(sala,fontMarcoTabla));  
-            // Indicamos cuantas columnas ocupa la celda
             celdatitulo.setColspan(8);
             table.addCell(celdatitulo);
             PdfPCell vacio = new PdfPCell(new Paragraph(""));  
@@ -199,10 +232,11 @@ public class ReportGenerator {
                     table.addCell(hora);
                 }
                 for (int j = 0; j < sal[i].length; j++) {
-                   PdfPCell tmp = new PdfPCell(new Paragraph(sal[i][j]+"",fontContenido));  
+                   PdfPCell tmp = new PdfPCell(new Paragraph((int)Math.ceil(sal[i][j])+"",fontContenido));  
                    table.addCell(tmp);
                 }
             }
+            
             document.add(table);
     }
 }

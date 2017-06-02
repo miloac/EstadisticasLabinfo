@@ -109,7 +109,7 @@ public class Analysis {
         }
     };
 
-    private static final HashMap<String, int[][]> SALONES = new HashMap<String, int[][]>() {
+    private static HashMap<String, int[][]> SALONES = new HashMap<String, int[][]>() {
         {
             put("REDES", new int[8][6]);
             put("INFRAESTRUCTURA", new int[8][6]);     //plataformas
@@ -161,6 +161,16 @@ public class Analysis {
     }
 
     public void statisticWeek(int cod) throws FileNotFoundException {
+        SALONES = new HashMap<String, int[][]>() {
+        {
+            put("REDES", new int[8][6]);
+            put("INFRAESTRUCTURA", new int[8][6]);     //plataformas
+            put("B-0", new int[8][6]);      //ingenieria IW
+            put("C1-205B", new int[8][6]);
+            put("INTERACTIVA", new int[8][6]);
+            put("TURNOS", new int[8][6]); //BO (turnos)    
+        }
+    };
         Conexion reservas = new ReservasConexion();
         try {
             Connection res = reservas.connection();
@@ -207,7 +217,7 @@ public class Analysis {
 
     public void statisticsAll(int ini, int fin, int semanas) throws FileNotFoundException {
         Set<String> salones = CONSOLIDADO.keySet();
-        for (int i = ini; i < fin + 1; i++) {
+        for (int i = ini; i <= fin; i++) {
             statisticWeek(i);
             for (String sal : salones) {
                 for (int j = 0; j < 8; j++) {
@@ -229,12 +239,6 @@ public class Analysis {
                     CONSOLIDADO.get(sal)[8][h] += CONSOLIDADO.get(sal)[j][h];
                 }
             }
-            /**
-             * System.out.println(sal+".............."); for (int j=0; j<9;
-             * j++){
-             * System.out.println(Arrays.toString(CONSOLIDADO.get(sal)[j])); }
-             * System.out.println("..............");
-             */
         }
 
     }
@@ -321,30 +325,57 @@ public class Analysis {
 
         if (hora < 830) {
             temp[HORA.get("7:00")][DIA.get(dia)] += 1;
+            if(temp[HORA.get("7:00")][DIA.get(dia)]>PCXSALONES.get(salon)){
+                temp[HORA.get("7:00")][DIA.get(dia)]=PCXSALONES.get(salon);
+            }
         } else if (hora >= 830 && hora < 1000) {
             temp[HORA.get("8:30")][DIA.get(dia)] += 1;
+            if(temp[HORA.get("8:30")][DIA.get(dia)]>PCXSALONES.get(salon)){
+                temp[HORA.get("8:30")][DIA.get(dia)]=PCXSALONES.get(salon);
+            }
         } else if (hora >= 1000 && hora < 1130) {
             temp[HORA.get("10:00")][DIA.get(dia)] += 1;
+            if(temp[HORA.get("10:00")][DIA.get(dia)]>PCXSALONES.get(salon)){
+                temp[HORA.get("10:00")][DIA.get(dia)]=PCXSALONES.get(salon);
+            }
         } else if (hora >= 1130 && hora < 1300) {
             temp[HORA.get("11:30")][DIA.get(dia)] += 1;
+            if(temp[HORA.get("11:30")][DIA.get(dia)]>PCXSALONES.get(salon)){
+                temp[HORA.get("11:30")][DIA.get(dia)]=PCXSALONES.get(salon);
+            }
         } else if (hora >= 1300 && hora < 1430) {
             temp[HORA.get("1:00")][DIA.get(dia)] += 1;
+            if(temp[HORA.get("1:00")][DIA.get(dia)]>PCXSALONES.get(salon)){
+                temp[HORA.get("1:00")][DIA.get(dia)]=PCXSALONES.get(salon);
+            }
         } else if (hora >= 1430 && hora < 1600) {
             temp[HORA.get("2:30")][DIA.get(dia)] += 1;
+            if(temp[HORA.get("2:30")][DIA.get(dia)]>PCXSALONES.get(salon)){
+                temp[HORA.get("2:30")][DIA.get(dia)]=PCXSALONES.get(salon);
+            }
         } else if (hora >= 1600 && hora < 1730) {
             temp[HORA.get("4:00")][DIA.get(dia)] += 1;
+            if(temp[HORA.get("4:00")][DIA.get(dia)]>PCXSALONES.get(salon)){
+                temp[HORA.get("4:00")][DIA.get(dia)]=PCXSALONES.get(salon);
+            }
         } else if (hora >= 1730 && hora < 1900) {
             temp[HORA.get("5:30")][DIA.get(dia)] += 1;
+            if( temp[HORA.get("5:30")][DIA.get(dia)]>PCXSALONES.get(salon)){
+                 temp[HORA.get("5:30")][DIA.get(dia)]=PCXSALONES.get(salon);
+            }
         } else if (hora > 1900) {
             temp[HORA.get("5:30")][DIA.get(dia)] += 1;
+            if(temp[HORA.get("5:30")][DIA.get(dia)]>PCXSALONES.get(salon)){
+                temp[HORA.get("5:30")][DIA.get(dia)]=PCXSALONES.get(salon);
+            }
         }
         SALONES.put(salon, temp);
     }
     
     private String getMayorHora(String sala){
         int ind=0;
+        double max=0.0;
         for (int j = 0; j < 8; j++) {
-            double max=0.0;
             if(max<CONSOLIDADO.get(sala)[j][6]){
                 max=CONSOLIDADO.get(sala)[j][6];
                 ind=j;
@@ -355,8 +386,8 @@ public class Analysis {
     
     private String getMayorDia(String sala){
         int ind=0;
+        double max=0.0;
          for (int j = 0; j < 6; j++) {
-            double max=0.0;
             if(max<CONSOLIDADO.get(sala)[8][j]){
                 max=CONSOLIDADO.get(sala)[8][j];
                 ind=j;

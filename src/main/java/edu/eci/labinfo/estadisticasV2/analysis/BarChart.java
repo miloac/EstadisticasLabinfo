@@ -9,14 +9,10 @@ package edu.eci.labinfo.estadisticasV2.analysis;
  *
  * @author Daniela Sepulveda
  */
-import static com.oracle.jrockit.jfr.ContentType.Bytes;
-import java.awt.Graphics2D;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
+import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.DocumentException;
 import java.io.IOException;
 import java.util.HashMap;
-import javax.imageio.ImageIO;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel; 
 import org.jfree.chart.JFreeChart; 
@@ -53,22 +49,23 @@ public class BarChart extends ApplicationFrame {
             put(7,"5:30");
         }
     };
+    private JFreeChart barChart;
    
-   public BarChart( String applicationTitle , String chartTitle, double[][] sal) {
+   public BarChart( String applicationTitle , String chartTitle, double[][] sal) throws BadElementException, IOException, DocumentException {
       super( applicationTitle );//titulo jframe
       sala=sal;  
       nsala=chartTitle;
-      JFreeChart barChart = ChartFactory.createBarChart(
+      barChart = ChartFactory.createBarChart(
          chartTitle,           //titulo grafico
-         "Dias semana",            
          "Horario",            
+         "promedio",            
          createDataset(),          
          PlotOrientation.VERTICAL,           
          true, true, false);
-         
       ChartPanel chartPanel = new ChartPanel( barChart );        
-      chartPanel.setPreferredSize(new java.awt.Dimension( 600 , 500 ) );        
-      setContentPane( chartPanel ); 
+      chartPanel.setPreferredSize(new java.awt.Dimension( 500 , 300 ) );        
+      setContentPane( chartPanel );
+      
    }
    
    private CategoryDataset createDataset() {
@@ -76,7 +73,7 @@ public class BarChart extends ApplicationFrame {
       new DefaultCategoryDataset( );  
       for (int h = 0; h < 6; h++) {
           for (int j = 0; j < 8; j++) {
-            dataset.addValue( sala[j][h],HORA.get(j), DIA.get(h));
+            dataset.addValue( sala[j][h], DIA.get(h),HORA.get(j));
           }
       }
       
@@ -87,20 +84,10 @@ public class BarChart extends ApplicationFrame {
         this.pack( );        
         RefineryUtilities.centerFrameOnScreen( this );       
         this.setVisible( true ); 
+        
    }
-   public byte[] getImage() throws IOException{
-        this.pack( );        
-        RefineryUtilities.centerFrameOnScreen( this );
-        this.setVisible( true );
-        BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = image.createGraphics();
-        this.paint(graphics2D);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(image, "jpg", baos);
-        byte[] bytes = baos.toByteArray();
-        this.setVisible( false ); 
-        //this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        dispose();
-        return bytes;
+   public JFreeChart getbarChart(){
+       return barChart;
    }
+
 }
