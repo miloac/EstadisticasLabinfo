@@ -11,7 +11,6 @@ import edu.eci.labinfo.estadisticasv2.conexion.ReservasConexion;
 import edu.eci.labinfo.estadisticasv2.generator.CSVGenerator;
 import edu.eci.labinfo.estadisticasv2.generator.Generator;
 import edu.eci.labinfo.estadisticasv2.generator.PDFGenerator;
-import edu.eci.labinfo.estadisticasv2.logs.Log;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -22,8 +21,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -160,7 +157,7 @@ public class Analysis {
         genCSV = new CSVGenerator();
     }
 
-    public void statisticWeek(int cod) throws FileNotFoundException {
+    public void statisticWeek(int cod) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
         SALONES = new HashMap<String, int[][]>() {
         {
             put("REDES", new int[8][6]);
@@ -172,7 +169,6 @@ public class Analysis {
         }
     };
         Conexion reservas = new ReservasConexion();
-        try {
             Connection res = reservas.connection();
             String semana = "SELECT semana FROM `semanas` where id=" + cod;
             Statement stmt = res.prepareStatement(semana);
@@ -209,13 +205,10 @@ public class Analysis {
             res.close();
             genPDF.documento(Integer.toString(cod), consulta, getSoftware(), getB0(), getPlataformas(), getRedes(), getMultimedia(), getInteractiva());
             genCSV.documento(Integer.toString(cod), consulta, getSoftware(), getB0(), getPlataformas(), getRedes(), getMultimedia(), getInteractiva());
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Analysis.class.getName()).log(Level.SEVERE, null, ex);
-            Log.anotar(ex);
-        }
+        
     }
 
-    public void statisticsAll(int ini, int fin, int semanas) throws FileNotFoundException {
+    public void statisticsAll(int ini, int fin, int semanas) throws FileNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
         Set<String> salones = CONSOLIDADO.keySet();
         for (int i = ini; i <= fin; i++) {
             statisticWeek(i);
@@ -243,10 +236,9 @@ public class Analysis {
 
     }
 
-    private void controlStatistics(GregorianCalendar fechaInicioSemana, GregorianCalendar fechaFinSemana) {
+    private void controlStatistics(GregorianCalendar fechaInicioSemana, GregorianCalendar fechaFinSemana) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
         Conexion estadisticas = new EstadisticasConexion();
         Connection esta;
-        try {
             esta = estadisticas.connection();
             int year = fechaInicioSemana.get(Calendar.YEAR);
             int month = fechaInicioSemana.get(Calendar.MONTH);
@@ -304,10 +296,7 @@ public class Analysis {
                 }
             }
             esta.close();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(Analysis.class.getName()).log(Level.SEVERE, null, ex);
-            Log.anotar(ex);
-        }
+      
     }
 
     private boolean isNumeric(String t) {
@@ -370,6 +359,20 @@ public class Analysis {
             }
         }
         SALONES.put(salon, temp);
+    }
+    public HashMap<String,Integer> getIdSemanas() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+            Conexion reservas = new ReservasConexion();
+            Connection res = reservas.connection();
+            HashMap<String,Integer>semanas=new HashMap<>();
+            String consulta = "SELECT * FROM `semanas`";
+            Statement stmt = res.prepareStatement(consulta);
+            ResultSet rs = stmt.executeQuery(consulta);
+            while (rs.next()) {
+                int id = Integer.parseInt(rs.getString("id"));
+                String semana = rs.getString("semana");
+                semanas.put(semana, id);
+            }
+            return semanas;       
     }
     
     private String getMayorHora(String sala){
