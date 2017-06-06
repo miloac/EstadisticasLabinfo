@@ -52,6 +52,8 @@ public class EstadisticasVisual extends JPanel {
     JLabel estadisticos;
     JLabel opcionSelected;
     JButton generar;
+    JButton generarSemana;
+    JPanel opcion;
     String labels[] = {"Semana", "Tercio 1", "Tercio 2", "Tercio 3", "Consolidado"};
     static Analysis an;
     HashMap<String, Integer> semanas;
@@ -66,6 +68,7 @@ public class EstadisticasVisual extends JPanel {
     int iniS, finS;
     String sInicio;
     String sFin;
+    String semanaSelected;
     static int year;
 
     public static void main(String[] args) {
@@ -97,7 +100,6 @@ public class EstadisticasVisual extends JPanel {
             public void actionPerformed(final ActionEvent e) {
                 JComboBox jcmbType = (JComboBox) e.getSource();
                 String selectedTask = (String) jcmbType.getSelectedItem();
-                System.out.println(selectedTask);
                 refreshPanel(selectedTask);
             }
         });
@@ -107,7 +109,9 @@ public class EstadisticasVisual extends JPanel {
         task.add(estadistico);
         task.setVisible(true);
         add(task, BorderLayout.CENTER);
+        refreshPanel("Semana");
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
     }
 
     /**
@@ -115,7 +119,9 @@ public class EstadisticasVisual extends JPanel {
      * @param estadisticas
      */
     protected void refreshPanel(String estadisticas) {
-        JPanel opcion = new JPanel();
+        if(opcion!=null)opcion.setVisible(false);
+        opcion = new JPanel();
+        opcion.setVisible(false);
         opcion.setBorder(BorderFactory.createTitledBorder("Opcion: " + estadisticas));
         if (estadisticas.equals("Semana")) {
             try {
@@ -132,18 +138,28 @@ public class EstadisticasVisual extends JPanel {
                     public void actionPerformed(final ActionEvent e) {
                         JComboBox jcmbType = (JComboBox) e.getSource();
                         String selectedTask = (String) jcmbType.getSelectedItem();
-                        System.out.println(selectedTask + " en semana.");
+                        semanaSelected=selectedTask;
+                    }
+                });
+                generarSemana = new JButton("Generar");
+                generarSemana.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(final ActionEvent e) {
                         try {
-                            an.statisticWeek(semanas.get(selectedTask));
+                            an.statisticWeek(semanas.get(semanaSelected));
+                            JOptionPane.showMessageDialog(null, "Estadisticas generadas.", "OK", JOptionPane.INFORMATION_MESSAGE);
                         } catch (FileNotFoundException | InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
                             Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
                             Log.anotar(ex);
                             JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
-                        }
+                        } 
                     }
                 });
+                generarSemana.setVerticalTextPosition(AbstractButton.BOTTOM);
+                generarSemana.setHorizontalTextPosition(AbstractButton.CENTER);
                 opcion.add(opcionSelected);
                 opcion.add(week);
+                opcion.add(generarSemana);
                 opcion.setVisible(true);
                 add(opcion, BorderLayout.PAGE_END);
 
@@ -192,6 +208,7 @@ public class EstadisticasVisual extends JPanel {
                         try {
                             an.statisticsAll(iniS, finS, numSemanas.get(estadisticas));
                             ReportGenerator repor=new ReportGenerator("Estadisticas "+estadisticas+"-"+year,"semana "+iniS+"-"+finS+" ",sInicio+" "+sFin,an);
+                            JOptionPane.showMessageDialog(null, "Estadisticas generadas.", "OK", JOptionPane.INFORMATION_MESSAGE);
                         } catch (FileNotFoundException | InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
                             Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
                             Log.anotar(ex);
@@ -244,7 +261,7 @@ public class EstadisticasVisual extends JPanel {
         picture.setHorizontalAlignment(JLabel.CENTER);
         putLabel();
         picture.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        picture.setPreferredSize(new Dimension(400, 310));
+        picture.setPreferredSize(new Dimension(600, 400));
         add(picture, BorderLayout.PAGE_START);
 
     }
