@@ -6,6 +6,7 @@ import edu.eci.labinfo.estadisticasv2.generator.ReportGenerator;
 import edu.eci.labinfo.estadisticasv2.logs.Log;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
@@ -72,12 +73,9 @@ public class EstadisticasVisual extends JPanel {
     static int year;
 
     public static void main(String[] args) {
-        //try {
         GregorianCalendar fecha = new GregorianCalendar();
         year = fecha.get(Calendar.YEAR);
         an = new Analysis();
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -132,6 +130,7 @@ public class EstadisticasVisual extends JPanel {
                 Set<String> modsemanas = semanas.keySet();
                 String[] arr = modsemanas.toArray(new String[modsemanas.size()]);
                 Arrays.sort(arr);
+                semanaSelected=arr[0];
                 week = new JComboBox(arr);
                 week.addActionListener(new ActionListener() {
                     @Override
@@ -148,7 +147,7 @@ public class EstadisticasVisual extends JPanel {
                         try {
                             an.statisticWeek(semanas.get(semanaSelected));
                             JOptionPane.showMessageDialog(null, "Estadisticas generadas.", "OK", JOptionPane.INFORMATION_MESSAGE);
-                        } catch (FileNotFoundException | InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
+                        } catch (FileNotFoundException | InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException | HeadlessException ex) {
                             Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
                             Log.anotar(ex);
                             JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
@@ -179,6 +178,8 @@ public class EstadisticasVisual extends JPanel {
                 String[] arr = modsemanas.toArray(new String[modsemanas.size()]);
                 Arrays.sort(arr);
                 inicio = new JComboBox(arr);
+                sInicio=arr[0];
+                iniS=1;
                 inicio.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
@@ -192,6 +193,8 @@ public class EstadisticasVisual extends JPanel {
                 semanaFin.setFont(semanaFin.getFont().deriveFont(Font.ITALIC));
                 semanaFin.setHorizontalAlignment(JLabel.LEFT);
                 fin = new JComboBox(arr);
+                sFin=arr[0];
+                finS=1;
                 fin.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
@@ -230,7 +233,7 @@ public class EstadisticasVisual extends JPanel {
                 opcion.setVisible(true);
                 add(opcion, BorderLayout.PAGE_END);
 
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
+            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex ) {
                 Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
                 Log.anotar(ex);
                 JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
