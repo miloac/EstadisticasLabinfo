@@ -73,7 +73,7 @@ public class BarChart extends ApplicationFrame {
       new DefaultCategoryDataset( );  
       for (int h = 0; h < 6; h++) {
           for (int j = 0; j < 8; j++) {
-            dataset.addValue( sala[j][h], DIA.get(h),HORA.get(j));
+            dataset.addValue((int)Math.ceil(sala[j][h]), DIA.get(h),HORA.get(j));
           }
       }
       

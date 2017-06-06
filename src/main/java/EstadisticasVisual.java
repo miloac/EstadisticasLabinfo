@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,7 +58,8 @@ public class EstadisticasVisual extends JPanel {
     JPanel opcion;
     String labels[] = {"Semana", "Tercio 1", "Tercio 2", "Tercio 3", "Consolidado"};
     static Analysis an;
-    HashMap<String, Integer> semanas;
+    HashMap<Integer, String> semanas;
+    HashMap<String, Integer> semanasReves;
     HashMap<String, Integer> numSemanas = new HashMap<String, Integer>() {
         {
             put("Consolidado", 16);
@@ -117,27 +119,36 @@ public class EstadisticasVisual extends JPanel {
      * @param estadisticas
      */
     protected void refreshPanel(String estadisticas) {
-        if(opcion!=null)opcion.setVisible(false);
+        if (opcion != null) {
+            opcion.setVisible(false);
+        }
         opcion = new JPanel();
         opcion.setVisible(false);
         opcion.setBorder(BorderFactory.createTitledBorder("Opcion: " + estadisticas));
-        if (estadisticas.equals("Semana")) {
-            try {
+        semanasReves = new HashMap<>();
+        try {
+            semanas = an.getIdSemanas();
+            Set<Integer> modsemanas = semanas.keySet();
+            String[] arr = new String[modsemanas.size()];
+            arr[0] = " ";
+            for (int i = 1; i < modsemanas.size(); i++) {
+                System.out.println(i);
+                arr[i] = semanas.get(i);
+                semanasReves.put(arr[i], i);
+            }
+            if (estadisticas.equals("Semana")) {
+
                 opcionSelected = new JLabel("Semana: ");
                 opcionSelected.setFont(opcionSelected.getFont().deriveFont(Font.ITALIC));
                 opcionSelected.setHorizontalAlignment(JLabel.LEFT);
-                semanas = an.getIdSemanas();
-                Set<String> modsemanas = semanas.keySet();
-                String[] arr = modsemanas.toArray(new String[modsemanas.size()]);
-                Arrays.sort(arr);
-                semanaSelected=arr[0];
+                semanaSelected = arr[0];
                 week = new JComboBox(arr);
                 week.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
                         JComboBox jcmbType = (JComboBox) e.getSource();
                         String selectedTask = (String) jcmbType.getSelectedItem();
-                        semanaSelected=selectedTask;
+                        semanaSelected = selectedTask;
                     }
                 });
                 generarSemana = new JButton("Generar");
@@ -145,13 +156,13 @@ public class EstadisticasVisual extends JPanel {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
                         try {
-                            an.statisticWeek(semanas.get(semanaSelected));
+                            an.statisticWeek(semanasReves.get(semanaSelected));
                             JOptionPane.showMessageDialog(null, "Estadisticas generadas.", "OK", JOptionPane.INFORMATION_MESSAGE);
                         } catch (FileNotFoundException | InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException | HeadlessException ex) {
                             Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
                             Log.anotar(ex);
                             JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
-                        } 
+                        }
                     }
                 });
                 generarSemana.setVerticalTextPosition(AbstractButton.BOTTOM);
@@ -162,46 +173,36 @@ public class EstadisticasVisual extends JPanel {
                 opcion.setVisible(true);
                 add(opcion, BorderLayout.PAGE_END);
 
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
-                Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
-                Log.anotar(ex);
-                JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
-            }
+            } else {
 
-        } else {
-            try {
                 semanaInicio = new JLabel("Semana inicio: ");
                 semanaInicio.setFont(semanaInicio.getFont().deriveFont(Font.ITALIC));
                 semanaInicio.setHorizontalAlignment(JLabel.LEFT);
-                semanas = an.getIdSemanas();
-                Set<String> modsemanas = semanas.keySet();
-                String[] arr = modsemanas.toArray(new String[modsemanas.size()]);
-                Arrays.sort(arr);
                 inicio = new JComboBox(arr);
-                sInicio=arr[0];
-                iniS=1;
+                sInicio = arr[0];
+                iniS = 1;
                 inicio.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
                         JComboBox jcmbType = (JComboBox) e.getSource();
                         String selectedTask = (String) jcmbType.getSelectedItem();
-                        iniS = semanas.get(selectedTask);
-                        sInicio=selectedTask;
+                        iniS = semanasReves.get(selectedTask);
+                        sInicio = selectedTask;
                     }
                 });
                 semanaFin = new JLabel("Semana fin: ");
                 semanaFin.setFont(semanaFin.getFont().deriveFont(Font.ITALIC));
                 semanaFin.setHorizontalAlignment(JLabel.LEFT);
                 fin = new JComboBox(arr);
-                sFin=arr[0];
-                finS=1;
+                sFin = arr[0];
+                finS = 1;
                 fin.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
                         JComboBox jcmbType = (JComboBox) e.getSource();
                         String selectedTask = (String) jcmbType.getSelectedItem();
-                        finS = semanas.get(selectedTask);
-                        sFin=selectedTask;
+                        finS = semanasReves.get(selectedTask);
+                        sFin = selectedTask;
                     }
                 });
                 generar = new JButton("Generar");
@@ -209,12 +210,12 @@ public class EstadisticasVisual extends JPanel {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
                         try {
-                            if(iniS<=finS){
-                                System.out.println(iniS+" "+finS);
+                            if (iniS <= finS) {
+                                System.out.println(iniS + " " + finS);
                                 an.statisticsAll(iniS, finS, numSemanas.get(estadisticas));
-                                ReportGenerator repor=new ReportGenerator(estadisticas+"-"+year,"semana "+iniS+"-"+finS+" ",sInicio+" "+sFin,an);
+                                ReportGenerator repor = new ReportGenerator(estadisticas + "-" + year, "semana " + iniS + "-" + finS + " ", sInicio + " " + sFin, an);
                                 JOptionPane.showMessageDialog(null, "Estadisticas generadas.", "OK", JOptionPane.INFORMATION_MESSAGE);
-                            }else{
+                            } else {
                                 JOptionPane.showMessageDialog(null, "Por favor, revisar las fechas", "Error", JOptionPane.ERROR_MESSAGE);
                             }
                         } catch (FileNotFoundException | InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
@@ -237,13 +238,13 @@ public class EstadisticasVisual extends JPanel {
                 opcion.add(generar, BorderLayout.PAGE_END);
                 opcion.setVisible(true);
                 add(opcion, BorderLayout.PAGE_END);
-
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex ) {
-                Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
-                Log.anotar(ex);
-                JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
             }
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
+            Log.anotar(ex);
+            JOptionPane.showMessageDialog(null, "Ocurri\u00f3 un error inesperado en el procedimiento.", "Error", 0);
         }
+
     }
 
     /**
@@ -281,7 +282,8 @@ public class EstadisticasVisual extends JPanel {
      * @return
      */
     protected static ImageIcon createImageIcon(String path) {
-        URL imgURL = EstadisticasVisual.class.getResource(path);
+        URL imgURL = EstadisticasVisual.class
+                .getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL);
         } else {

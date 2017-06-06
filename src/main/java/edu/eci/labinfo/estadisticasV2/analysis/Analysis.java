@@ -360,17 +360,17 @@ public class Analysis {
         }
         SALONES.put(salon, temp);
     }
-    public HashMap<String,Integer> getIdSemanas() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
+    public HashMap<Integer,String> getIdSemanas() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException{
             Conexion reservas = new ReservasConexion();
             Connection res = reservas.connection();
-            HashMap<String,Integer>semanas=new HashMap<>();
+            HashMap<Integer,String>semanas=new HashMap<>();
             String consulta = "SELECT * FROM `semanas`";
             Statement stmt = res.prepareStatement(consulta);
             ResultSet rs = stmt.executeQuery(consulta);
             while (rs.next()) {
                 int id = Integer.parseInt(rs.getString("id"));
                 String semana = rs.getString("semana");
-                semanas.put(semana, id);
+                semanas.put(id, semana);
             }
             return semanas;       
     }
