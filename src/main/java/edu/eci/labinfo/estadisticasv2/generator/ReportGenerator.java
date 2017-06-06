@@ -43,7 +43,7 @@ public class ReportGenerator {
     public ReportGenerator(String titulo,String semana, String fecha,Analysis an) throws FileNotFoundException, DocumentException, IOException, InterruptedException{
             ana=an;
             document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream("ReporteEstadisticas-"+semana+"-" +fecha+ ".pdf"));
+            PdfWriter.getInstance(document, new FileOutputStream("ReporteEstadisticas-"+titulo+"-"+semana+"-" +fecha+ ".pdf"));
             document.open();
             document.newPage();
             document.addTitle("Estad\u00edsticas laboratorio informatica: "+titulo+ " " +semana + " " + fecha);

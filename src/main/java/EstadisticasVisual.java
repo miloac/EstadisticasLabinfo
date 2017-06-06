@@ -209,9 +209,14 @@ public class EstadisticasVisual extends JPanel {
                     @Override
                     public void actionPerformed(final ActionEvent e) {
                         try {
-                            an.statisticsAll(iniS, finS, numSemanas.get(estadisticas));
-                            ReportGenerator repor=new ReportGenerator("Estadisticas "+estadisticas+"-"+year,"semana "+iniS+"-"+finS+" ",sInicio+" "+sFin,an);
-                            JOptionPane.showMessageDialog(null, "Estadisticas generadas.", "OK", JOptionPane.INFORMATION_MESSAGE);
+                            if(iniS<=finS){
+                                System.out.println(iniS+" "+finS);
+                                an.statisticsAll(iniS, finS, numSemanas.get(estadisticas));
+                                ReportGenerator repor=new ReportGenerator(estadisticas+"-"+year,"semana "+iniS+"-"+finS+" ",sInicio+" "+sFin,an);
+                                JOptionPane.showMessageDialog(null, "Estadisticas generadas.", "OK", JOptionPane.INFORMATION_MESSAGE);
+                            }else{
+                                JOptionPane.showMessageDialog(null, "Por favor, revisar las fechas", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
                         } catch (FileNotFoundException | InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException ex) {
                             Logger.getLogger(EstadisticasVisual.class.getName()).log(Level.SEVERE, null, ex);
                             Log.anotar(ex);
