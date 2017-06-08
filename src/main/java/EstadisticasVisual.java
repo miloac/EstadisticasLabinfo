@@ -208,7 +208,6 @@ public class EstadisticasVisual extends JPanel {
                     public void actionPerformed(final ActionEvent e) {
                         try {
                             if (iniS <= finS) {
-                                System.out.println(iniS + " " + finS);
                                 an.statisticsAll(iniS, finS, numSemanas.get(estadisticas));
                                 ReportGenerator repor = new ReportGenerator(estadisticas + "-" + year, "semana " + iniS + "-" + finS + " ", sInicio + " " + sFin, an);
                                 JOptionPane.showMessageDialog(null, "Estadisticas generadas.", "OK", JOptionPane.INFORMATION_MESSAGE);
