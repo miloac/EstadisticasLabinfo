@@ -13,11 +13,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -132,7 +130,6 @@ public class EstadisticasVisual extends JPanel {
             String[] arr = new String[modsemanas.size()];
             arr[0] = " ";
             for (int i = 1; i < modsemanas.size(); i++) {
-                System.out.println(i);
                 arr[i] = semanas.get(i);
                 semanasReves.put(arr[i], i);
             }
