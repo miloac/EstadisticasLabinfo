@@ -1,7 +1,7 @@
 /*
  * Decompiled with CFR 0_115.
  */
-package edu.eci.labinfo.estadisticasv2.conexion;
+package edu.eci.labinfo.estadisticasV2.conexion;
 
 import java.sql.Connection;
 import java.sql.SQLException;

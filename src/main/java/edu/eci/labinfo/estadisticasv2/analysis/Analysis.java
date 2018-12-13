@@ -5,12 +5,10 @@
  */
 package edu.eci.labinfo.estadisticasV2.analysis;
 
-import edu.eci.labinfo.estadisticasv2.conexion.Conexion;
-import edu.eci.labinfo.estadisticasv2.conexion.EstadisticasConexion;
-import edu.eci.labinfo.estadisticasv2.conexion.ReservasConexion;
-import edu.eci.labinfo.estadisticasv2.generator.CSVGenerator;
-import edu.eci.labinfo.estadisticasv2.generator.Generator;
-import edu.eci.labinfo.estadisticasv2.generator.PDFGenerator;
+import edu.eci.labinfo.estadisticasV2.conexion.*;
+import edu.eci.labinfo.estadisticasV2.generator.*;
+
+
 import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -265,7 +263,8 @@ public class Analysis {
                     //LOGS
                     String eq = rs.getString("EQUIPO");
                     String fecha = rs.getString("LOGON");
-                    String eqs = eq.toLowerCase().contains("sistema") ? eq.substring(8) : eq.substring(5);
+                    
+                    String eqs = eq.toLowerCase().contains("sistema") ? eq.substring(8) : eq.substring(4);
                     String[] hora = rs.getString("logon").trim().split(" ");
                     String[] hms = hora[1].split(":");
                     int h = Integer.valueOf(hms[0]) * 100 + Integer.valueOf(hms[1]);

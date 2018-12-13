@@ -1,9 +1,8 @@
-
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import edu.eci.labinfo.estadisticasV2.analysis.Analysis;
-import edu.eci.labinfo.estadisticasv2.generator.ReportGenerator;
-import edu.eci.labinfo.estadisticasv2.logs.Log;
+import edu.eci.labinfo.estadisticasV2.generator.*;
+import edu.eci.labinfo.estadisticasV2.logs.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.HeadlessException;

@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.eci.labinfo.estadisticasv2.conexion;
+package edu.eci.labinfo.estadisticasV2.conexion;
 
-import edu.eci.labinfo.estadisticasv2.logs.Log;
+import edu.eci.labinfo.estadisticasV2.logs.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

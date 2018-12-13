@@ -1,7 +1,7 @@
 /*
  * Decompiled with CFR 0_115.
  */
-package edu.eci.labinfo.estadisticasv2.generator;
+package edu.eci.labinfo.estadisticasV2.generator;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;

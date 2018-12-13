@@ -6,3 +6,7 @@ build/
 nbbuild/
 
 
+.classpath
+.project
+.settings
+bin/
